@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>KsWare.RepositoryDiff</RootNamespace>
+    <Version>0.1.0</Version>
+    <Authors>KsWare</Authors>
+    <Copyright>Copyright © by KsWare. All rights reserved.</Copyright>
+    <RepositoryUrl>https://github.com/KsWare/RepositoryDiff</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+    <PackageReleaseNotes>https://raw.githubusercontent.com/KsWare/RepositoryDiff/develop/ChangeLog.md</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/KsWare/RepositoryDiff</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
+    <PackageReference Include="System.Text.Json" Version="4.7.0" />
+  </ItemGroup>
+
+</Project>
