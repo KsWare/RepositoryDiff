@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -17,10 +18,9 @@ namespace KsWare.RepositoryDiff
 
         public void Execute(object parameter)
         {
-            foreach (var c in _mainWindowViewModel.Results)
+            foreach (var c in _mainWindowViewModel.Results.Where(x=>x.Level==0))
             {
-                if (c.Level == 0) c.UpdateFilter(_mainWindowViewModel.Filter);
-                else break; //early exit;
+                c.UpdateFilter(_mainWindowViewModel.Filter, false);
             }
             var collectionView = CollectionViewSource.GetDefaultView(_mainWindowViewModel.Results);
             collectionView.Refresh();

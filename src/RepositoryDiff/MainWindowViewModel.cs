@@ -23,7 +23,6 @@ namespace KsWare.RepositoryDiff
             Excludes.Add(@"^BuildOutput$");
             Excludes.Add(@"^packages$");
             Excludes.Add(@"^_ReSharper.Caches$");
-            Excludes.Add(@"^packages$");
             Excludes.Add(@"\\(bin|obj|build)$");
             Excludes.Add(@"\.user$");
             Excludes.Add(@"\.suo$");
@@ -42,6 +41,7 @@ namespace KsWare.RepositoryDiff
             Excludes.Add(@"(^|\\)Thumbs.db$");
             Excludes.Add(@"(^|\\)ehthumbs.db$");
             Excludes.Add(@"(^|\\)\$RECYCLE\.BIN$");
+            Excludes.Add(@"\.tmp$");
 
             CollectionView = CollectionViewSource.GetDefaultView(Results);
             CollectionView.Filter=Filter.FilterFunction;

@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using KsWare.RepositoryDiff.Commands;
 using KsWare.RepositoryDiff.Common;
@@ -11,7 +10,7 @@ namespace KsWare.RepositoryDiff
 {
     public class CompareResult : NotifyPropertyChangedBase
     {
-        private readonly MainWindowViewModel _mainWindowViewModel;
+        private MainWindowViewModel _mainWindowViewModel;
         private static int _lastId;
         private string _result;
         private bool? _isDirectory;
@@ -30,10 +29,10 @@ namespace KsWare.RepositoryDiff
         private bool _isHiddenBecauseFilter;
         private bool _isHiddenByUser;
         private bool _isHiddenBecauseAllChildsAreHidden;
+        private bool _isHiddenBecauseParentIsHidden;
 
 
         public CompareResult(string relativPath, FileSystemInfo a, FileSystemInfo b, FileSystemInfo c, string result, MainWindowViewModel mainWindowViewModel)
-            :this()
         {
             _mainWindowViewModel = mainWindowViewModel;
             Id = ++_lastId;
@@ -42,9 +41,13 @@ namespace KsWare.RepositoryDiff
             C = c;
             Result = result;
             RelativPath = relativPath;
+            InitCommands();
         }
 
-        public CompareResult()
+        [Obsolete("Only for serializer.",true)]
+        public CompareResult() { }
+
+        private void InitCommands()
         {
             // after import _mainWindowViewModel is null!
             CopyFullPathCommand = new CopyFullPathCommand();
@@ -52,8 +55,10 @@ namespace KsWare.RepositoryDiff
             OpenInExplorerCommand = new OpenInExplorerCommand();
             LeftDoubleClickCommand = new LeftDoubleClickCommand(this);
             CopyABCommand = new CopyABCommand(this);
-            DeleteBCommand = new DeleteBCommand(this);
+            DeleteBCommand = new DeleteBCommand(this);            
         }
+
+       
 
         public int Id { get; set; }
 
@@ -199,11 +204,11 @@ namespace KsWare.RepositoryDiff
             OnPropertyChanged(nameof(NameB));
         }
 
-        public CopyFullPathCommand CopyFullPathCommand { get; } 
-        public DiffCommand DiffCommand { get; } 
-        public OpenInExplorerCommand OpenInExplorerCommand { get; }
+        public CopyFullPathCommand CopyFullPathCommand { get; set; }
+        public DiffCommand DiffCommand { get; set; }
+        public OpenInExplorerCommand OpenInExplorerCommand { get; set; }
 
-        public LeftDoubleClickCommand LeftDoubleClickCommand { get; }
+        public LeftDoubleClickCommand LeftDoubleClickCommand { get; set; }
 
         [JsonIgnore]
         public IList<CompareResult> Children { get; set; } = new List<CompareResult>();
@@ -254,10 +259,20 @@ namespace KsWare.RepositoryDiff
                 UpdateIsHidden();
             }
         }
+        [JsonIgnore]
+        private bool IsHiddenBecauseParentIsHidden
+        {
+            get => _isHiddenBecauseParentIsHidden;
+            set
+            {
+                _isHiddenBecauseParentIsHidden = value;
+                UpdateIsHidden();
+            }
+        }
 
         private void UpdateIsHidden()
         {
-            IsHidden = _isHiddenBecauseFilter || _isHiddenBecauseCollapsed || _isHiddenByUser || _isHiddenBecauseAllChildsAreHidden;
+            IsHidden = _isHiddenBecauseFilter || _isHiddenBecauseCollapsed || _isHiddenByUser || _isHiddenBecauseAllChildsAreHidden || _isHiddenBecauseParentIsHidden;
         }
 
         [JsonIgnore]
@@ -273,15 +288,16 @@ namespace KsWare.RepositoryDiff
 
         public string Directory => _directory ??= Helpers.GetDirectory(RelativPath);
 
-        public CopyABCommand CopyABCommand { get; }
+        public CopyABCommand CopyABCommand { get; set; }
 
-        public DeleteBCommand DeleteBCommand { get; }
+        public DeleteBCommand DeleteBCommand { get; set; }
 
         public string FileExtension => _fileExtension ??= Path.GetExtension(Name);
 
         public void InitImport(MainWindowViewModel mainWindowViewModel)
         {
-            DiffCommand.MainWindowViewModel=_mainWindowViewModel;
+            _mainWindowViewModel = mainWindowViewModel;
+            InitCommands();
         }
 
         private static void HideRecursive(IEnumerable<CompareResult> children)
@@ -302,12 +318,16 @@ namespace KsWare.RepositoryDiff
             }
         }
 
-        public void UpdateFilter(FilterViewModel filter)
+        public void UpdateFilter(FilterViewModel filter, bool isHiddenBecauseParentIsHidden)
         {
+            IsHiddenBecauseParentIsHidden = isHiddenBecauseParentIsHidden;
             IsHiddenBecauseFilter = !filter.Match(this);
-            Children.ForEach(c=>c.UpdateFilter(filter));
-            IsHiddenBecauseAllChildsAreHidden = Children.Count > 0 && Children.All(c => c.IsHidden);
-            
+            if (IsDirectory)
+            {
+                Children.ForEach(c=>c.UpdateFilter(filter, IsHiddenBecauseFilter));
+                IsHiddenBecauseAllChildsAreHidden = Children.Count == 0 || (Children.Count >0 && Children.All(c => c.IsHidden));
+                
+            }
         }
     }
 }

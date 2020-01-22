@@ -63,6 +63,10 @@
             <ItemsControl ItemsSource="{Binding ResultC.AllTerms}" Style="{StaticResource FilterTerms}"/>
         </DockPanel>
         <DockPanel>
+            <Label Content="Name (RegEx)" />
+            <TextBox Text="{Binding NameRegEx}"/>
+        </DockPanel>
+        <DockPanel>
             <Label Content="Extension" />
             <ItemsControl ItemsSource="{Binding FileExtensions.AllTerms}" Style="{StaticResource FilterTerms}"/>
         </DockPanel>

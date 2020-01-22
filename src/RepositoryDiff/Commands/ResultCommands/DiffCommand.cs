@@ -15,8 +15,8 @@ namespace KsWare.RepositoryDiff.Commands
 
         public DiffCommand(CompareResult compareResult, MainWindowViewModel mainWindowViewModel)
         {
-            _compareResult = compareResult;
-            _mainWindowViewModel = mainWindowViewModel;
+            _compareResult = compareResult ?? throw new ArgumentNullException(nameof(compareResult));
+            _mainWindowViewModel = mainWindowViewModel ?? throw new ArgumentNullException(nameof(mainWindowViewModel));
         }
 
         public MainWindowViewModel MainWindowViewModel

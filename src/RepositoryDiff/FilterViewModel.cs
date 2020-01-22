@@ -1,4 +1,6 @@
-﻿namespace KsWare.RepositoryDiff
+﻿using System.Text.RegularExpressions;
+
+namespace KsWare.RepositoryDiff
 {
     public class FilterViewModel : NotifyPropertyChangedBase
     {
@@ -8,6 +10,8 @@
         public FilterTermViewModel ResultB { get; } = new FilterTermViewModel();
         public FilterTermViewModel ResultC { get; } = new FilterTermViewModel();
         public FilterTermViewModel FileExtensions { get; } = new FilterTermViewModel();
+
+        public string NameRegEx { get => Get<string>(); set => Set(value); }
 
         
         public FilterViewModel()
@@ -32,7 +36,7 @@
             if (isFile && ResultB.Match(c.ResultB)==false) return false;
             if (isFile && ResultC.Match(c.ResultC)==false) return false;
             if (isFile && FileExtensions.Match(c.FileExtension)==false) return false;
-
+            if (isFile && !string.IsNullOrWhiteSpace(NameRegEx) && Regex.IsMatch(c.Name, NameRegEx, RegexOptions.IgnoreCase) == false) return false;
             return true;
         }
 
