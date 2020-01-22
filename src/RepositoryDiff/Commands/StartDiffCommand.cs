@@ -61,21 +61,21 @@ namespace KsWare.RepositoryDiff.Commands
             {
                 if (folderA.Exists && folderB.Exists)
                 {
-                    var result = new CompareResult(relativeName, folderA, folderB, null, "");
+                    var result = new CompareResult(relativeName, folderA, folderB, null, "", _mainWindowViewModel);
                     if(relativeName!="") Results.Add(result);
                     result.Result = ScanFilesAndSubFolders(folderA, folderB, null);
                     return result.Result;
                 }
                 if (!folderA.Exists && folderB.Exists)
                 {
-                    var result = new CompareResult(relativeName, folderA, folderB, null, "<<");
+                    var result = new CompareResult(relativeName, folderA, folderB, null, "<<", _mainWindowViewModel);
                     Results.Add(result);
                     ScanFilesAndSubFolders(folderA, folderB, null);
                     return result.Result;
                 }
                 if (folderA.Exists && !folderB.Exists)
                 {
-                    var result = new CompareResult(relativeName, folderA, folderB, null, ">>");
+                    var result = new CompareResult(relativeName, folderA, folderB, null, ">>", _mainWindowViewModel);
                     Results.Add(result);
                     ScanFilesAndSubFolders(folderA, folderB, null);
                     return result.Result;
@@ -84,7 +84,7 @@ namespace KsWare.RepositoryDiff.Commands
             }
             else // 3-way
             {
-                var result = new CompareResult(relativeName, folderA, folderB, folderC, "");
+                var result = new CompareResult(relativeName, folderA, folderB, folderC, "", _mainWindowViewModel);
                 if(relativeName!="") Results.Add(result);
                 result.Result =  ScanFilesAndSubFolders(folderA, folderB, folderC);
 
@@ -199,7 +199,7 @@ namespace KsWare.RepositoryDiff.Commands
                 {
                     throw new NotImplementedException();
                 }
-                Results.Add(new CompareResult(relativeName, a, b, c, result));
+                Results.Add(new CompareResult(relativeName, a, b, c, result, _mainWindowViewModel));
                 return result;
             }
             else // 3-way
@@ -220,7 +220,7 @@ namespace KsWare.RepositoryDiff.Commands
                 else if (c1 && a1 && b0) result = CompareBinaryFileContent(a, b, c); // gelöscht auf B;
                 else if (c1 && a1 && b1) result = CompareBinaryFileContent(a, b, c); // 
 
-                Results.Add(new CompareResult(relativeName, a, b, c, result));
+                Results.Add(new CompareResult(relativeName, a, b, c, result, _mainWindowViewModel));
                 return result;
             }
         }

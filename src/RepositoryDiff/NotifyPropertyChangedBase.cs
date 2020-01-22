@@ -10,6 +10,8 @@ namespace KsWare.RepositoryDiff
     [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Public API")]
     public class NotifyPropertyChangedBase : INotifyPropertyChanged {
 
+        private Dictionary<string,object> _fields=new Dictionary<string, object>();
+
         /// <summary>
         /// Sets a backing field value and if it's changed raise a notification.
         /// </summary>
@@ -44,6 +46,48 @@ namespace KsWare.RepositoryDiff
 
             return true;
         }
+
+        public virtual T Get<T>([CallerMemberName] string propertyName = null)
+        {
+            T oldValue;
+            if (!_fields.TryGetValue(propertyName, out var fieldValue))
+            {
+                oldValue = default(T);
+                _fields.Add(propertyName,oldValue);
+            }
+            else
+            {
+                oldValue = (T) fieldValue;
+            }
+
+            return oldValue;
+        }
+
+        public virtual bool Set<T>(T newValue, [CallerMemberName] string propertyName = null)
+        {
+            T oldValue;
+            if (!_fields.TryGetValue(propertyName, out var fieldValue))
+            {
+                oldValue = default(T);
+                _fields.Add(propertyName,oldValue);
+            }
+            else
+            {
+                oldValue = (T) fieldValue;
+            }
+            
+            if (EqualityComparer<T>.Default.Equals(oldValue, newValue)) {
+                return false;
+            }
+
+            _fields[propertyName] = newValue;
+
+            NotifyPropertyChange(propertyName ?? string.Empty);
+
+            return true;
+        }
+
+
 
         private void NotifyPropertyChange(string propertyName) {
             OnPropertyChanged(propertyName);

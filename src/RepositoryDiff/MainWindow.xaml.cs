@@ -19,6 +19,14 @@ namespace KsWare.RepositoryDiff
             Loaded += (s, e) =>
             {
                 ResultsListView_SizeChanged(null, null);
+
+                var gv = (GridView) ResultsListView3.View;
+                gv.Columns[0].Width = 430;
+                gv.Columns[1].Width = 40;
+                gv.Columns[2].Width = 75;
+                gv.Columns[3].Width = 70;
+                gv.Columns[4].Width = 75;
+
             };
         }
 

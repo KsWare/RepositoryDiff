@@ -13,13 +13,12 @@ namespace KsWare.RepositoryDiff
     public class MainWindowViewModel : NotifyPropertyChangedBase
     {
         private string _fileNamesAsText;
-        private string _a;
-        private string _b;
-        private string _c;
 
         public MainWindowViewModel()
         {
-            
+            A = Options.A;
+            B = Options.B;
+            C = Options.C;
 
             Excludes.Add(@"(^|\\)\.");
             Excludes.Add(@"^BuildOutput$");
@@ -57,19 +56,23 @@ namespace KsWare.RepositoryDiff
 
             // if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             // {
-                Results.Add(new CompareResult(@"C",new FileInfo(@"C:\"),new FileInfo(@"D:\"),null,"!!" ));
+                Results.Add(new CompareResult(@"C",new FileInfo(@"C:\"),new FileInfo(@"D:\"),null,"!!", this));
                 Results[0].IsDirectory = true;
-                Results.Add(new CompareResult(@"C\a",new FileInfo(@"C:\a"),new FileInfo(@"D:\a"),null,"!!" ));
-                Results.Add(new CompareResult(@"C\a\b",new FileInfo(@"C:\a\b"),new FileInfo(@"D:\a\b"),null,"!!" ));
+                Results.Add(new CompareResult(@"C\a",new FileInfo(@"C:\a"),new FileInfo(@"D:\a"),null,"!!", this));
+                Results.Add(new CompareResult(@"C\a\b",new FileInfo(@"C:\a\b"),new FileInfo(@"D:\a\b"),null,"!!", this));
                 Helpers.CreateHierarchy(Results);
             // }
+
+            Application.Current.Exit+= (s,e) => Options.Save();
+            Application.Current.SessionEnding+=(s, e) => Options.Save();
         }
 
         public IList<string> Excludes { get; }=new List<string>();
 
-        public string A { get => _a; set => Set(ref _a, value); }
-        public string B { get => _b; set => Set(ref _b, value); }
-        public string C { get => _c; set => Set(ref _c, value); }
+        public string A { get => Options.A; set => Set(() => Options.A, v => Options.A = v, value); }
+
+        public string B { get => Options.B; set => Set(() => Options.B, v => Options.B = v, value); }
+        public string C { get => Options.C; set => Set(() => Options.C, v => Options.C = v, value); }
 
         public ICommand DiffCommand { get; }
 
@@ -95,6 +98,8 @@ namespace KsWare.RepositoryDiff
         public ICommand ExpandItemCommand { get; }
         public ICommand CollapseAllItemCommand { get; }
         public ICommand ExpandAllItemCommand { get; }
+
+        public OptionsViewModel Options { get; } = OptionsViewModel.LoadOrCreate();
     }
 
     public class CollapseItemCommand : ICommand

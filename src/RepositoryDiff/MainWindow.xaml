@@ -263,6 +263,35 @@
             <TabItem Header="Files">
                 <TextBox Text="{Binding FileNamesAsText}" FontFamily="Consolas" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
             </TabItem>
+            <TabItem Header="Options">
+                <StackPanel DataContext="{Binding Options}">
+                    <FrameworkElement.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                        <Style TargetType="Label">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Width" Value="120"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Padding" Value="0"/>
+                        </Style>
+                        <Style TargetType="DockPanel">
+                            <Setter Property="Height" Value="22"/>
+                        </Style>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </FrameworkElement.Resources>
+                    <DockPanel>
+                        <Label Content="AcknowledgeMerge"/>
+                        <CheckBox IsChecked="{Binding AcknowledgeMerge}"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Label Content="ShowMergedDiff"/>
+                        <CheckBox IsChecked="{Binding ShowMergedDiff}"/>
+                    </DockPanel>
+                </StackPanel>
+            </TabItem>
         </TabControl>
     </DockPanel>
 

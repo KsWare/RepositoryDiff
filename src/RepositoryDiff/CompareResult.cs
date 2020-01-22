@@ -12,6 +12,7 @@ namespace KsWare.RepositoryDiff
 {
     public class CompareResult : NotifyPropertyChangedBase
     {
+        private readonly MainWindowViewModel _mainWindowViewModel;
         private static int _lastId;
         private string _result;
         private bool? _isDirectory;
@@ -27,9 +28,10 @@ namespace KsWare.RepositoryDiff
         private string _resultA,_resultB,_resultC;
 
 
-        public CompareResult(string relativPath, FileSystemInfo a, FileSystemInfo b, FileSystemInfo c, string result)
+        public CompareResult(string relativPath, FileSystemInfo a, FileSystemInfo b, FileSystemInfo c, string result, MainWindowViewModel mainWindowViewModel)
             :this()
         {
+            _mainWindowViewModel = mainWindowViewModel;
             Id = ++_lastId;
             A = a;
             B = b;
@@ -40,8 +42,9 @@ namespace KsWare.RepositoryDiff
 
         public CompareResult()
         {
+            // after import _mainWindowViewModel is null!
             CopyFullPathCommand = new CopyFullPathCommand(this);
-            DiffCommand = new DiffCommand(this);
+            DiffCommand = new DiffCommand(this, _mainWindowViewModel);
             OpenInExplorerCommand = new OpenInExplorerCommand(this);
             LeftDoubleClickCommand = new LeftDoubleClickCommand(this);
         }
@@ -198,7 +201,10 @@ namespace KsWare.RepositoryDiff
 
         public string Directory => _directory ??= Helpers.GetDirectory(RelativPath);
 
-        
+        public void InitImport(MainWindowViewModel mainWindowViewModel)
+        {
+            DiffCommand.MainWindowViewModel=_mainWindowViewModel;
+        }
     }
 
     public class LeftDoubleClickCommand : ICommand
