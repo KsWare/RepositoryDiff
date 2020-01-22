@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Input;
 
-namespace KsWare.RepositoryDiff.Commands
+namespace KsWare.RepositoryDiff
 {
-    public class CopyFullPathCommand : ICommand
+    public class ExpandAllItemCommand : ICommand
     {
         public bool CanExecute(object parameter) => true;
 
         public void Execute(object parameter)
         {
-            Clipboard.SetText((string)parameter);
-
+            if(parameter==null) return;
+            ((CompareResult) parameter).IsExpanded = true;
+            //TODO recursive
         }
 
         public event EventHandler CanExecuteChanged;

@@ -93,10 +93,13 @@
                                     <DataTemplate DataType="repositoryDiff:CompareResult">
                                         <Grid ToolTip="{Binding A.FullName}">
                                             <Grid.ContextMenu>
-                                                <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                             d:DataContext="{d:DesignInstance Type=repositoryDiff:CompareResult, IsDesignTimeCreatable=False}"
+                                                             >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
                                                     <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding A.FullName}"/>
+                                                    <MenuItem Header="Copy to B" Command="{Binding CopyABCommand}"/>
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                             <TextBlock x:Name="TextBlock" Text="{Binding ResultA}"/>
@@ -114,7 +117,10 @@
                                     <DataTemplate DataType="repositoryDiff:CompareResult">
                                         <Grid ToolTip="{Binding C.FullName}">
                                             <Grid.ContextMenu>
-                                                <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <ContextMenu 
+                                                    DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                    d:DataContext="{d:DesignInstance Type=repositoryDiff:CompareResult, IsDesignTimeCreatable=False}"
+                                                    >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
                                                     <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding C.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding C.FullName}"/>
@@ -135,7 +141,10 @@
                                     <DataTemplate DataType="repositoryDiff:CompareResult">
                                         <Grid ToolTip="{Binding B.FullName}">
                                             <Grid.ContextMenu>
-                                                <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <ContextMenu 
+                                                    DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                    d:DataContext="{d:DesignInstance Type=repositoryDiff:CompareResult, IsDesignTimeCreatable=False}"
+                                                    >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
                                                     <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding B.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding B.FullName}"/>
@@ -184,7 +193,10 @@
                                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClickCommand}"></MouseBinding>
                                             </UIElement.InputBindings>
                                             <FrameworkElement.ContextMenu>
-                                                <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <ContextMenu 
+                                                    DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                    d:DataContext="{d:DesignInstance Type=repositoryDiff:CompareResult, IsDesignTimeCreatable=False}"
+                                                    >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
                                                     <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding A.FullName}"/>
@@ -224,7 +236,10 @@
                                     <DataTemplate DataType="repositoryDiff:CompareResult">
                                         <Grid ToolTip="{Binding B.FullName}">
                                             <Grid.ContextMenu>
-                                                <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <ContextMenu 
+                                                    DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                    d:DataContext="{d:DesignInstance Type=repositoryDiff:CompareResult, IsDesignTimeCreatable=False}"
+                                                    >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
                                                     <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding B.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding B.FullName}"/>
@@ -263,6 +278,10 @@
             <TabItem Header="Files">
                 <TextBox Text="{Binding FileNamesAsText}" FontFamily="Consolas" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
             </TabItem>
+            <TabItem Header="Filter">
+                <repositoryDiff:FilterView DataContext="{Binding Filter}"/>
+
+            </TabItem>
             <TabItem Header="Options">
                 <StackPanel DataContext="{Binding Options}">
                     <FrameworkElement.Resources>
@@ -279,6 +298,9 @@
                             <Setter Property="Height" Value="22"/>
                         </Style>
                         <Style TargetType="CheckBox">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                        <Style TargetType="TextBox">
                             <Setter Property="VerticalAlignment" Value="Center"/>
                         </Style>
                     </FrameworkElement.Resources>

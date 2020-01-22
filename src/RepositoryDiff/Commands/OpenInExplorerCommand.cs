@@ -6,11 +6,8 @@ namespace KsWare.RepositoryDiff.Commands
 {
     public class OpenInExplorerCommand : ICommand
     {
-        private readonly CompareResult _compareResult;
-
-        public OpenInExplorerCommand(CompareResult compareResult)
+        public OpenInExplorerCommand()
         {
-            _compareResult = compareResult;
         }
 
         public bool CanExecute(object parameter)

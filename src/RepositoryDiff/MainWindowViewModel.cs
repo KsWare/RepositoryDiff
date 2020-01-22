@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -45,7 +44,7 @@ namespace KsWare.RepositoryDiff
             Excludes.Add(@"(^|\\)\$RECYCLE\.BIN$");
 
             CollectionView = CollectionViewSource.GetDefaultView(Results);
-            CollectionView.Filter=Filter;
+            CollectionView.Filter=Filter.FilterFunction;
 
             DiffCommand = new StartDiffCommand(this);
             ExportCommand = new ExportCommand(this);
@@ -53,6 +52,8 @@ namespace KsWare.RepositoryDiff
             ExpandItemCommand = new ExpandItemCommand();
             CollapseAllItemCommand = new CollapseAllItemCommand();
             ExpandAllItemCommand = new ExpandAllItemCommand();
+
+            Filter.RefreshCommand = new RefreshCommand(this);
 
             // if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             // {
@@ -66,6 +67,8 @@ namespace KsWare.RepositoryDiff
             Application.Current.Exit+= (s,e) => Options.Save();
             Application.Current.SessionEnding+=(s, e) => Options.Save();
         }
+
+        public FilterViewModel Filter { get; } =new FilterViewModel();
 
         public IList<string> Excludes { get; }=new List<string>();
 
@@ -81,13 +84,6 @@ namespace KsWare.RepositoryDiff
         public IList<CompareResult> Results { get; set; } = new ObservableCollection<CompareResult>();
         public string FileNamesAsText { get => _fileNamesAsText; set => Set(ref _fileNamesAsText, value); }
 
-        private bool Filter(object obj)
-        {
-            var c = (CompareResult) obj;
-            if (c.Result == "==" || c.Result == "===") return false;
-            return true;
-        }
-
         public ICollectionView CollectionView { get; set; }
 
         public string RootA { get; set; }
@@ -100,58 +96,5 @@ namespace KsWare.RepositoryDiff
         public ICommand ExpandAllItemCommand { get; }
 
         public OptionsViewModel Options { get; } = OptionsViewModel.LoadOrCreate();
-    }
-
-    public class CollapseItemCommand : ICommand
-    {
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
-        {
-            if(parameter==null) return;
-            ((CompareResult) parameter).IsExpanded = false;
-        }
-
-        public event EventHandler CanExecuteChanged;
-    }
-    public class ExpandItemCommand : ICommand
-    {
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
-        {
-            if(parameter==null) return;
-            ((CompareResult) parameter).IsExpanded = true;
-        }
-
-        public event EventHandler CanExecuteChanged;
-    }
-
-    public class CollapseAllItemCommand : ICommand
-    {
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
-        {
-            if(parameter==null) return;
-            ((CompareResult) parameter).IsExpanded = false;
-            //TODO recursive
-        }
-
-        public event EventHandler CanExecuteChanged;
-    }
-
-    public class ExpandAllItemCommand : ICommand
-    {
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
-        {
-            if(parameter==null) return;
-            ((CompareResult) parameter).IsExpanded = true;
-            //TODO recursive
-        }
-
-        public event EventHandler CanExecuteChanged;
     }
 }

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using System.Windows.Input;
 using KsWare.RepositoryDiff.Commands;
 
 namespace KsWare.RepositoryDiff
@@ -26,6 +24,7 @@ namespace KsWare.RepositoryDiff
         private int? _level;
         private string _indent;
         private string _resultA,_resultB,_resultC;
+        private string _fileExtension;
 
 
         public CompareResult(string relativPath, FileSystemInfo a, FileSystemInfo b, FileSystemInfo c, string result, MainWindowViewModel mainWindowViewModel)
@@ -43,10 +42,12 @@ namespace KsWare.RepositoryDiff
         public CompareResult()
         {
             // after import _mainWindowViewModel is null!
-            CopyFullPathCommand = new CopyFullPathCommand(this);
+            CopyFullPathCommand = new CopyFullPathCommand();
             DiffCommand = new DiffCommand(this, _mainWindowViewModel);
-            OpenInExplorerCommand = new OpenInExplorerCommand(this);
+            OpenInExplorerCommand = new OpenInExplorerCommand();
             LeftDoubleClickCommand = new LeftDoubleClickCommand(this);
+            CopyABCommand = new CopyABCommand(this);
+            DeleteBCommand = new DeleteBCommand(this);
         }
 
         public int Id { get; set; }
@@ -82,7 +83,20 @@ namespace KsWare.RepositoryDiff
             set => C = value != null ? (IsDirectory ? (FileSystemInfo)new DirectoryInfo(value) : new FileInfo(value)) : null;
         }
 
-        public string Result { get => _result; set => Set(ref _result, value); }
+        public string Result
+        {
+            get => _result;
+            set
+            {
+                Set(ref _result, value);
+                _resultA = null;
+                _resultB = null;
+                _resultC = null;
+                OnPropertyChanged(nameof(ResultA));
+                OnPropertyChanged(nameof(ResultB));
+                OnPropertyChanged(nameof(ResultC));
+            }
+        }
 
         public string ResultA => _resultA ??= CalcResultA();
 
@@ -174,7 +188,11 @@ namespace KsWare.RepositoryDiff
         public string NameB => _nameB ??= B.Exists ? Name : null;
         public string NameC => _nameC ??= C?.Exists ?? false ? Name : null;
 
-
+        public void UpdateNameB()
+        {
+            _nameB = null;
+            OnPropertyChanged(nameof(NameB));
+        }
 
         public CopyFullPathCommand CopyFullPathCommand { get; } 
         public DiffCommand DiffCommand { get; } 
@@ -201,29 +219,15 @@ namespace KsWare.RepositoryDiff
 
         public string Directory => _directory ??= Helpers.GetDirectory(RelativPath);
 
+        public CopyABCommand CopyABCommand { get; }
+
+        public DeleteBCommand DeleteBCommand { get; }
+
+        public string FileExtension => _fileExtension ??= Path.GetExtension(Name);
+
         public void InitImport(MainWindowViewModel mainWindowViewModel)
         {
             DiffCommand.MainWindowViewModel=_mainWindowViewModel;
         }
-    }
-
-    public class LeftDoubleClickCommand : ICommand
-    {
-        private readonly CompareResult _compareResult;
-
-        public LeftDoubleClickCommand(CompareResult compareResult)
-        {
-            _compareResult = compareResult;
-        }
-
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
-        {
-            if (_compareResult.IsDirectory) _compareResult.IsExpanded = !_compareResult.IsExpanded;
-            else _compareResult.DiffCommand.Execute(null);
-        }
-
-        public event EventHandler CanExecuteChanged;
     }
 }

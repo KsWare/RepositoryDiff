@@ -6,5 +6,6 @@
     mc:Ignorable="d">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/RepositoryDiff;component/Resources/TreeViewItemToggleButton.xaml" />
+        <ResourceDictionary Source="/RepositoryDiff;component/Resources/DropDownList.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
