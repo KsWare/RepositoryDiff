@@ -19,14 +19,31 @@ namespace KsWare.RepositoryDiff
 
         public MainWindowViewModel()
         {
+            
 
             Excludes.Add(@"(^|\\)\.");
             Excludes.Add(@"^BuildOutput$");
             Excludes.Add(@"^packages$");
             Excludes.Add(@"^_ReSharper.Caches$");
             Excludes.Add(@"^packages$");
-            Excludes.Add(@"\\(bin|obj)$");
+            Excludes.Add(@"\\(bin|obj|build)$");
             Excludes.Add(@"\.user$");
+            Excludes.Add(@"\.suo$");
+            Excludes.Add(@"\.sln\.docstates$");
+            Excludes.Add(@"\.pdb$");
+            Excludes.Add(@"\.vspscc$");
+            Excludes.Add(@"\.vssscc$");
+            Excludes.Add(@"\.log");
+            Excludes.Add(@"(^|\\)_UpgradeReport_Files$");
+            Excludes.Add(@"(^|\\)Backup");
+            Excludes.Add(@"(^|\\)UpgradeLog.*\.xml$");
+            Excludes.Add(@"(^|\\)UpgradeLog.*\.htm$");
+            Excludes.Add(@"(^|\\)Desktop\.ini$");
+            Excludes.Add(@"(^|\\)CodeGraphData$");
+            Excludes.Add(@"\.rtflow\.xml$");
+            Excludes.Add(@"(^|\\)Thumbs.db$");
+            Excludes.Add(@"(^|\\)ehthumbs.db$");
+            Excludes.Add(@"(^|\\)\$RECYCLE\.BIN$");
 
             CollectionView = CollectionViewSource.GetDefaultView(Results);
             CollectionView.Filter=Filter;

@@ -24,6 +24,7 @@ namespace KsWare.RepositoryDiff
         private string _indentedNameA,_indentedNameB,_indentedNameC;
         private int? _level;
         private string _indent;
+        private string _resultA,_resultB,_resultC;
 
 
         public CompareResult(string relativPath, FileSystemInfo a, FileSystemInfo b, FileSystemInfo c, string result)
@@ -79,6 +80,83 @@ namespace KsWare.RepositoryDiff
         }
 
         public string Result { get => _result; set => Set(ref _result, value); }
+
+        public string ResultA => _resultA ??= CalcResultA();
+
+        private string CalcResultA()
+        {
+            if (Result.Length == 2)
+            {
+                return "?"; //TODO;
+            }
+            else if (Result.Length==3)
+            {
+                switch (Result[0])
+                {
+                    case '=' : return "Unchanged";
+                    case '#' : return "Changed";
+                    case 'x' : return "Deleted";
+                    case '*' : return "Created";
+                    case '-' : return ""; // does not exist, used together with new (*,-)
+                    default  : return Result[1].ToString();
+                }
+            }
+            else
+            {
+                return "";
+            }
+            
+        }
+
+        public string ResultB => _resultB ??= CalcResultB();
+
+        private string CalcResultB()
+        {
+            if (Result.Length == 2)
+            {
+                return "?"; //TODO;
+            }
+            else if (Result.Length==3)
+            {
+                switch (Result[2])
+                {
+                    case '=' : return "Unchanged";
+                    case '#' : return "Changed";
+                    case 'x' : return "Deleted";
+                    case '*' : return "Created";
+                    case '-' : return ""; // does not exist, used together with new (*,-)
+                    default  : return Result[1].ToString();
+                }
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public string ResultC => _resultC ??= CalcResultC();
+
+        private string CalcResultC()
+        {
+            if (Result.Length == 2)
+            {
+                return "";
+            }
+            else if (Result.Length==3)
+            {
+                switch (Result[1])
+                {
+                    case '=' : return "Equal";
+                    case '!' : return "Conflict";
+                    case ',':case '|' : return "";
+                    default  : return Result[1].ToString();
+                }
+            }
+            else
+            {
+                return "";
+            }
+        }
 
 
         public int Level => _level ??= RelativPath.Split('\\').Length - 1;

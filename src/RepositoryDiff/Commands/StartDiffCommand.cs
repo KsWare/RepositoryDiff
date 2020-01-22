@@ -178,6 +178,7 @@ namespace KsWare.RepositoryDiff.Commands
         private string CompareFile(FileInfo a, FileInfo b, FileInfo c)
         {
             string relativeName = GetRelativeName(RootA,a.FullName);
+            if (IsExcluded(relativeName)) return c == null ? "==" : "===";
 
             if (c == null) // 2-way
             {
@@ -240,7 +241,7 @@ namespace KsWare.RepositoryDiff.Commands
 
                 using (FileStream fs1 = a.OpenRead())
                 using (FileStream fs2 = b.OpenRead())
-                using (FileStream fs3 = b.OpenRead())
+                using (FileStream fs3 = c.OpenRead())
                 {
                     byte[] ac = new byte[BYTES_TO_READ];
                     byte[] bc = new byte[BYTES_TO_READ];
@@ -258,8 +259,8 @@ namespace KsWare.RepositoryDiff.Commands
                         var cv = BitConverter.ToInt64(cc, 0);
 
                         if (av != cv) acResult = "!!";
-                        if (bv == cv) bcResult = "!!";
-                        if (bv == cv) abResult = "!!";
+                        if (bv != cv) bcResult = "!!";
+                        if (av != bv) abResult = "!!";
                         if(acResult=="!!" &&bcResult=="!!" && abResult=="!!") break;
                     }
                 }

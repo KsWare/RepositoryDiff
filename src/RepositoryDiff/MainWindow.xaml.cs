@@ -15,7 +15,11 @@ namespace KsWare.RepositoryDiff
         {
             InitializeComponent();
             ResultsListView.SizeChanged+=ResultsListView_SizeChanged;
-
+            ResultsListView3.SizeChanged+=ResultsListView3_SizeChanged;
+            Loaded += (s, e) =>
+            {
+                ResultsListView_SizeChanged(null, null);
+            };
         }
 
         private void ResultsListView_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -23,6 +27,15 @@ namespace KsWare.RepositoryDiff
             var gv = (GridView) ResultsListView.View;
             gv.Columns[0].Width = (ResultsListView.ActualWidth - gv.Columns[1].ActualWidth) / 2;
             gv.Columns[2].Width = gv.Columns[0].Width;
+        }
+
+        private void ResultsListView3_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // var gv = (GridView) ResultsListView3.View;
+            // gv.Columns[0].Width = (ResultsListView3.ActualWidth - gv.Columns[1].ActualWidth) / 2.5;
+            // gv.Columns[2].Width = gv.Columns[0].Width/2;
+            // gv.Columns[3].Width = gv.Columns[0].Width/2;
+            // gv.Columns[4].Width = gv.Columns[0].Width/2;
         }
     }
 
