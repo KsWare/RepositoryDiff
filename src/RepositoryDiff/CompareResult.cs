@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using KsWare.RepositoryDiff.Commands;
+using KsWare.RepositoryDiff.Common;
 
 namespace KsWare.RepositoryDiff
 {
@@ -25,6 +26,10 @@ namespace KsWare.RepositoryDiff
         private string _indent;
         private string _resultA,_resultB,_resultC;
         private string _fileExtension;
+        private bool _isHiddenBecauseCollapsed;
+        private bool _isHiddenBecauseFilter;
+        private bool _isHiddenByUser;
+        private bool _isHiddenBecauseAllChildsAreHidden;
 
 
         public CompareResult(string relativPath, FileSystemInfo a, FileSystemInfo b, FileSystemInfo c, string result, MainWindowViewModel mainWindowViewModel)
@@ -204,7 +209,56 @@ namespace KsWare.RepositoryDiff
         public IList<CompareResult> Children { get; set; } = new List<CompareResult>();
 
         [JsonIgnore]
-        public bool IsHidden { get => _isHidden; internal set => Set(ref _isHidden, value); }
+        public bool IsHidden { get => _isHidden; private set => Set(ref _isHidden, value); }
+
+        [JsonIgnore]
+        private bool IsHiddenByUser
+        {
+            get => _isHiddenByUser;
+            set
+            {
+                _isHiddenByUser = value;
+                UpdateIsHidden();
+            }
+        }
+
+        [JsonIgnore]
+        private bool IsHiddenBecauseCollapsed
+        {
+            get => _isHiddenBecauseCollapsed;
+            set
+            {
+                _isHiddenBecauseCollapsed = value;
+                UpdateIsHidden();
+            }
+        }
+
+        [JsonIgnore]
+        private bool IsHiddenBecauseFilter
+        {
+            get => _isHiddenBecauseFilter;
+            set
+            {
+                _isHiddenBecauseFilter = value;
+                UpdateIsHidden();
+            }
+        }
+
+        [JsonIgnore]
+        private bool IsHiddenBecauseAllChildsAreHidden
+        {
+            get => _isHiddenBecauseAllChildsAreHidden;
+            set
+            {
+                _isHiddenBecauseAllChildsAreHidden = value;
+                UpdateIsHidden();
+            }
+        }
+
+        private void UpdateIsHidden()
+        {
+            IsHidden = _isHiddenBecauseFilter || _isHiddenBecauseCollapsed || _isHiddenByUser || _isHiddenBecauseAllChildsAreHidden;
+        }
 
         [JsonIgnore]
         public bool IsExpanded
@@ -213,7 +267,7 @@ namespace KsWare.RepositoryDiff
             set
             {
                 if(!Set(ref _isExpanded, value)) return;
-                if(value) Helpers.ShowRecursive(Children); else Helpers.HideRecursive(Children);
+                if(value) ShowRecursive(Children); else HideRecursive(Children);
             }
         }
 
@@ -228,6 +282,32 @@ namespace KsWare.RepositoryDiff
         public void InitImport(MainWindowViewModel mainWindowViewModel)
         {
             DiffCommand.MainWindowViewModel=_mainWindowViewModel;
+        }
+
+        private static void HideRecursive(IEnumerable<CompareResult> children)
+        {
+            foreach (var child in children)
+            {
+                child.IsHiddenBecauseCollapsed = true;
+                HideRecursive(child.Children);
+            }
+        }
+
+        private static void ShowRecursive(IEnumerable<CompareResult> children)
+        {
+            foreach (var child in children)
+            {
+                child.IsHiddenBecauseCollapsed = false;
+                if(child.IsExpanded) ShowRecursive(child.Children); else HideRecursive(child.Children);
+            }
+        }
+
+        public void UpdateFilter(FilterViewModel filter)
+        {
+            IsHiddenBecauseFilter = !filter.Match(this);
+            Children.ForEach(c=>c.UpdateFilter(filter));
+            IsHiddenBecauseAllChildsAreHidden = Children.Count > 0 && Children.All(c => c.IsHidden);
+            
         }
     }
 }

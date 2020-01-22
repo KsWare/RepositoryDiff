@@ -20,24 +20,5 @@ namespace KsWare.RepositoryDiff
             if (components.Length == 1) return "";
             return string.Join("\\", components.Take(components.Length - 1));
         }
-
-        public static void HideRecursive(IEnumerable<CompareResult> children)
-        {
-            foreach (var child in children)
-            {
-                child.IsHidden = true;
-                HideRecursive(child.Children);
-            }
-        }
-
-        public static void ShowRecursive(IEnumerable<CompareResult> children)
-        {
-            foreach (var child in children)
-            {
-                child.IsHidden = false;
-                if(child.IsExpanded) ShowRecursive(child.Children); else HideRecursive(child.Children);
-            }
-        }
-        
     }
 }

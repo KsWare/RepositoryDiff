@@ -17,6 +17,11 @@ namespace KsWare.RepositoryDiff
 
         public void Execute(object parameter)
         {
+            foreach (var c in _mainWindowViewModel.Results)
+            {
+                if (c.Level == 0) c.UpdateFilter(_mainWindowViewModel.Filter);
+                else break; //early exit;
+            }
             var collectionView = CollectionViewSource.GetDefaultView(_mainWindowViewModel.Results);
             collectionView.Refresh();
         }
