@@ -8,9 +8,11 @@ namespace KsWare.RepositoryDiff.Common
 {
     [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Public API")]
     [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Public API")]
+    [SuppressMessage("ReSharper", "MethodNameNotMeaningful", Justification = "Get/Set pattern")]
+    [SuppressMessage("ReSharper", "TooManyArguments", Justification = "by design")]
     public class NotifyPropertyChangedBase : INotifyPropertyChanged {
 
-        private Dictionary<string,object> _fields=new Dictionary<string, object>();
+        private readonly Dictionary<string,object> _fields=new Dictionary<string, object>();
 
         /// <summary>
         /// Sets a backing field value and if it's changed raise a notification.
@@ -20,8 +22,7 @@ namespace KsWare.RepositoryDiff.Common
         /// <param name="newValue">The new value.</param>
         /// <param name="propertyName">The name of the property for change notifications.</param>
         /// <returns></returns>
-        [SuppressMessage("ReSharper", "MethodNameNotMeaningful", Justification = "Set pattern")]
-        public virtual bool Set<T>(ref T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
+        protected virtual bool Set<T>(ref T oldValue, T newValue, [CallerMemberName] string propertyName = null) {
             if (EqualityComparer<T>.Default.Equals(oldValue, newValue)) {
                 return false;
             }
@@ -33,7 +34,7 @@ namespace KsWare.RepositoryDiff.Common
             return true;
         }
 
-        public bool Set<T>(Func<T> getter, Action<T> setter, T newValue, [CallerMemberName] string propertyName = null) {
+        protected bool Set<T>(Func<T> getter, Action<T> setter, T newValue, [CallerMemberName] string propertyName = null) {
             var oldValue = getter();
 
             if (EqualityComparer<T>.Default.Equals(oldValue, newValue)) {
@@ -47,7 +48,7 @@ namespace KsWare.RepositoryDiff.Common
             return true;
         }
 
-        public virtual T Get<T>([CallerMemberName] string propertyName = null)
+        protected virtual T Get<T>([CallerMemberName] string propertyName = null)
         {
             T oldValue;
             if (!_fields.TryGetValue(propertyName, out var fieldValue))
@@ -63,7 +64,7 @@ namespace KsWare.RepositoryDiff.Common
             return oldValue;
         }
 
-        public virtual bool Set<T>(T newValue, [CallerMemberName] string propertyName = null)
+        protected virtual bool Set<T>(T newValue, [CallerMemberName] string propertyName = null)
         {
             T oldValue;
             if (!_fields.TryGetValue(propertyName, out var fieldValue))

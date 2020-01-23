@@ -8,6 +8,8 @@
     xmlns:mainWindow="clr-namespace:KsWare.RepositoryDiff.UI.MainWindow"
     xmlns:filter="clr-namespace:KsWare.RepositoryDiff.UI.Filter"
     xmlns:results="clr-namespace:KsWare.RepositoryDiff.UI.Results"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:files="clr-namespace:KsWare.RepositoryDiff.UI.Files"
     mc:Ignorable="d"
     Title="MainWindowView" Height="450" Width="800"
     d:DataContext="{d:DesignInstance Type=mainWindow:MainWindowViewModel, IsDesignTimeCreatable=True}"
@@ -297,7 +299,7 @@
 
             </TabItem>
             <TabItem Header="Files">
-                <TextBox Text="{Binding FileNamesAsText}" FontFamily="Consolas" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                <files:FilesView DataContext="{Binding Files}"/>
             </TabItem>
             <TabItem Header="Filter">
                 <filter:FilterView DataContext="{Binding Filter}"/>

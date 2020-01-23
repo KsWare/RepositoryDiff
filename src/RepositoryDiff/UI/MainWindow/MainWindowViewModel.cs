@@ -11,6 +11,7 @@ using System.Windows.Input;
 using KsWare.RepositoryDiff.Commands;
 using KsWare.RepositoryDiff.Common;
 using KsWare.RepositoryDiff.Data;
+using KsWare.RepositoryDiff.UI.Files;
 using KsWare.RepositoryDiff.UI.Filter;
 using KsWare.RepositoryDiff.UI.MainWindow.Commands;
 using KsWare.RepositoryDiff.UI.Options;
@@ -45,7 +46,7 @@ namespace KsWare.RepositoryDiff.UI.MainWindow
             SaveFileFilterCommand = new SaveFileFilterCommand(this);
             SaveFileFilterAsCommand = new SaveFileFilterAsCommand(this);
             LoadFileFilterCommand = new LoadFileFilterCommand(this);
-
+            Files=new FilesViewModel(this);
             FileFilter = FileFilter.Default;
             UpdateFilePatterns();
 
@@ -83,7 +84,7 @@ namespace KsWare.RepositoryDiff.UI.MainWindow
         public IList<CompareResultViewModel> Results { get; } = new ObservableCollection<CompareResultViewModel>();
         public ICollectionView CollectionView { get; }
 
-        public string FileNamesAsText { get => _fileNamesAsText; set => Set(ref _fileNamesAsText, value); }
+        public FilesViewModel Files { get;}
 
         public string RootA { get; set; }
         public string RootB { get; set; }

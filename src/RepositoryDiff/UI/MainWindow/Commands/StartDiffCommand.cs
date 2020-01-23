@@ -40,8 +40,7 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
             RecursiveScanFolders(da, db, dc);
             Helpers.CreateHierarchy(Results);
 
-            _mainWindowViewModel.CollectionView.Refresh();
-            _mainWindowViewModel.FileNamesAsText = string.Join("\r\n", Results.Where(x=>!x.IsDirectory).Select(x => x.RelativPath));
+            _mainWindowViewModel.Filter.RefreshCommand.Execute(null);
         }
 
         private string RootA => _mainWindowViewModel.RootA;
