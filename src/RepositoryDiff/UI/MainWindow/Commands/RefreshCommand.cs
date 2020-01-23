@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
 {
     public class RefreshCommand : ICommand
     {

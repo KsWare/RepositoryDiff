@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.Common
 {
     [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global", Justification = "Public API")]
     [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Public API")]

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Windows.Input;
+using KsWare.RepositoryDiff.UI.Results;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.Commands
 {
     public class CollapseAllItemCommand : ICommand
     {
@@ -10,7 +11,7 @@ namespace KsWare.RepositoryDiff
         public void Execute(object parameter)
         {
             if(parameter==null) return;
-            ((CompareResult) parameter).IsExpanded = false;
+            ((CompareResultViewModel) parameter).IsExpanded = false;
             //TODO recursive
         }
 

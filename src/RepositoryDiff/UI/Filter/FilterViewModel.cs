@@ -1,6 +1,9 @@
 ﻿using System.Text.RegularExpressions;
+using KsWare.RepositoryDiff.Common;
+using KsWare.RepositoryDiff.UI.MainWindow.Commands;
+using KsWare.RepositoryDiff.UI.Results;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.UI.Filter
 {
     public class FilterViewModel : NotifyPropertyChangedBase
     {
@@ -21,11 +24,11 @@ namespace KsWare.RepositoryDiff
 
         public bool FilterFunction(object obj)
         {
-            var c = (CompareResult) obj;
+            var c = (CompareResultViewModel) obj;
             return !c.IsHidden;
         }
 
-        public bool Match(CompareResult c)
+        public bool Match(CompareResultViewModel c)
         {
             var is3Way = c.Result?.Length == 3;
             var is2Way = c.Result?.Length == 2;

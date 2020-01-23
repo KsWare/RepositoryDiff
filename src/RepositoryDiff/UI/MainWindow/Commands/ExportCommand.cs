@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Windows.Input;
 
-namespace KsWare.RepositoryDiff.Commands
+namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
 {
     public class ExportCommand : ICommand
     {
@@ -24,7 +25,7 @@ namespace KsWare.RepositoryDiff.Commands
                 WriteIndented = true,
                 Converters = { }
             };
-            var json = JsonSerializer.Serialize(_mainWindowViewModel.Results,jsonProperties);
+            var json = JsonSerializer.Serialize(_mainWindowViewModel.Results.Select(x=>x.Data),jsonProperties);
             using var w = new StreamWriter(File.Open("export.json", FileMode.Create,FileAccess.Write));
             w.Write(json);
         }

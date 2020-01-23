@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using KsWare.RepositoryDiff.Common;
+using KsWare.RepositoryDiff.UI.MainWindow;
 
-namespace KsWare.RepositoryDiff.Commands
+namespace KsWare.RepositoryDiff.UI.Results.Commands
 {
     public class DiffCommand : ICommand
     {
-        private readonly CompareResult _compareResult;
+        private readonly CompareResultViewModel _compareResult;
         private MainWindowViewModel _mainWindowViewModel;
 
-        public DiffCommand(CompareResult compareResult, MainWindowViewModel mainWindowViewModel)
+        public DiffCommand(CompareResultViewModel compareResult, MainWindowViewModel mainWindowViewModel)
         {
             _compareResult = compareResult ?? throw new ArgumentNullException(nameof(compareResult));
             _mainWindowViewModel = mainWindowViewModel ?? throw new ArgumentNullException(nameof(mainWindowViewModel));
@@ -27,9 +27,9 @@ namespace KsWare.RepositoryDiff.Commands
 
         public bool CanExecute(object parameter)
         {
-            if (_compareResult.C == null) // 2-way
+            if (_compareResult.Data.C == null) // 2-way
             {
-                return _compareResult.A != null && _compareResult.B != null && _compareResult.A.Exists && _compareResult.B.Exists;
+                return _compareResult.Data.A != null && _compareResult.Data.B != null && _compareResult.Data.A.Exists && _compareResult.Data.B.Exists;
             }
             else // 3-way
             {
@@ -49,40 +49,40 @@ namespace KsWare.RepositoryDiff.Commands
             {
                 case "SemanticMergeAB" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.A.FullName}\" -d \"{_compareResult.B.FullName}\"";
+                    arguments = $"-s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\"";
                     break;
                 case "SemanticMergeAC" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.A.FullName}\" -d \"{_compareResult.C.FullName}\"";
+                    arguments = $"-s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
                     break;
                 case "SemanticMergeBC" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.B.FullName}\" -d \"{_compareResult.C.FullName}\"";
+                    arguments = $"-s \"{_compareResult.Data.B.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
                     break;
                 case "SemanticMerge3Way" : 
-                    merged = GetTempFileName(Path.GetExtension(_compareResult.B.Name));
+                    merged = GetTempFileName(Path.GetExtension(_compareResult.Data.B.Name));
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.A.FullName}\" -d \"{_compareResult.B.FullName}\" -b \"{_compareResult.C.FullName}\" -r \"{merged}\"";
-                    arguments2 = $"-s \"{_compareResult.B.FullName}\" -d \"{merged}\"";
+                    arguments = $"-s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\" -b \"{_compareResult.Data.C.FullName}\" -r \"{merged}\"";
+                    arguments2 = $"-s \"{_compareResult.Data.B.FullName}\" -d \"{merged}\"";
                     break;
 
                 case "MergeToolSelectorAB" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool diff -s \"{_compareResult.A.FullName}\" -d \"{_compareResult.B.FullName}\"";
+                    arguments = $"-tool diff -s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\"";
                     break;
                 case "MergeToolSelectorAC" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool diff -s \"{_compareResult.A.FullName}\" -d \"{_compareResult.C.FullName}\"";
+                    arguments = $"-tool diff -s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
                     break;
                 case "MergeToolSelectorBC" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool diff -s \"{_compareResult.B.FullName}\" -d \"{_compareResult.C.FullName}\"";
+                    arguments = $"-tool diff -s \"{_compareResult.Data.B.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
                     break;
                 case "MergeToolSelector3Way" : 
-                    merged = GetTempFileName(Path.GetExtension(_compareResult.B.Name));
+                    merged = GetTempFileName(Path.GetExtension(_compareResult.Data.B.Name));
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool merge -s \"{_compareResult.A.FullName}\" -d \"{_compareResult.B.FullName}\" -b \"{_compareResult.C.FullName}\" -r \"{merged}\"";
-                    arguments2 = $"-tool diff -s \"{_compareResult.B.FullName}\" -d \"{merged}\"";
+                    arguments = $"-tool merge -s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\" -b \"{_compareResult.Data.C.FullName}\" -r \"{merged}\"";
+                    arguments2 = $"-tool diff -s \"{_compareResult.Data.B.FullName}\" -d \"{merged}\"";
                     break;
                 default:
                     if (_compareResult.NameC == null) goto case "SemanticMergeAB";
@@ -104,7 +104,7 @@ namespace KsWare.RepositoryDiff.Commands
                     File.Delete(merged);
                     merged = null;
                 }
-                if(merged!=null) File.Copy(merged,_compareResult.B.FullName,true);
+                if(merged!=null) File.Copy(merged,_compareResult.Data.B.FullName,true);
             }
             if(merged!=null) File.Delete(merged);
         }

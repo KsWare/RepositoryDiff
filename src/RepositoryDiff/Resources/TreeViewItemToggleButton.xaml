@@ -4,11 +4,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:repositoryDiff="clr-namespace:KsWare.RepositoryDiff"
+    xmlns:results="clr-namespace:KsWare.RepositoryDiff.UI.Results"
     mc:Ignorable="d"
 >
     <Style x:Key="TreeViewItemToggleButtonStyle" TargetType="ToggleButton">
         <d:Style.DataContext>
-            <x:Type>repositoryDiff:CompareResult</x:Type>
+            <x:Type>results:CompareResultViewModel</x:Type>
         </d:Style.DataContext>
         <Setter Property="IsChecked" Value="{Binding IsExpanded}"/>
         <Setter Property="IsEnabled" Value="{Binding IsDirectory}"/>

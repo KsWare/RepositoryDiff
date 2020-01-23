@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Windows.Documents;
 using KsWare.RepositoryDiff.Common;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.UI.Filter
 {
     public class FilterTermViewModel : NotifyPropertyChangedBase
     {

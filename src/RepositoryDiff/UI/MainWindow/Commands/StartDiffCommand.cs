@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
+using KsWare.RepositoryDiff.UI.Results;
 
-namespace KsWare.RepositoryDiff.Commands
+namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
 {
     public class StartDiffCommand : ICommand
     {
@@ -46,7 +47,7 @@ namespace KsWare.RepositoryDiff.Commands
         private string RootA => _mainWindowViewModel.RootA;
         private string RootB => _mainWindowViewModel.RootB;
         private string RootC => _mainWindowViewModel.RootC;
-        private IList<CompareResult> Results => _mainWindowViewModel.Results;
+        private IList<CompareResultViewModel> Results => _mainWindowViewModel.Results;
 
         private string RecursiveScanFolders(DirectoryInfo folderA, DirectoryInfo folderB, DirectoryInfo folderC)
         {
@@ -61,21 +62,21 @@ namespace KsWare.RepositoryDiff.Commands
             {
                 if (folderA.Exists && folderB.Exists)
                 {
-                    var result = new CompareResult(relativeName, folderA, folderB, null, "", _mainWindowViewModel);
+                    var result = new CompareResultViewModel(relativeName, folderA, folderB, null, "", _mainWindowViewModel);
                     if(relativeName!="") Results.Add(result);
                     result.Result = ScanFilesAndSubFolders(folderA, folderB, null);
                     return result.Result;
                 }
                 if (!folderA.Exists && folderB.Exists)
                 {
-                    var result = new CompareResult(relativeName, folderA, folderB, null, "<<", _mainWindowViewModel);
+                    var result = new CompareResultViewModel(relativeName, folderA, folderB, null, "<<", _mainWindowViewModel);
                     Results.Add(result);
                     ScanFilesAndSubFolders(folderA, folderB, null);
                     return result.Result;
                 }
                 if (folderA.Exists && !folderB.Exists)
                 {
-                    var result = new CompareResult(relativeName, folderA, folderB, null, ">>", _mainWindowViewModel);
+                    var result = new CompareResultViewModel(relativeName, folderA, folderB, null, ">>", _mainWindowViewModel);
                     Results.Add(result);
                     ScanFilesAndSubFolders(folderA, folderB, null);
                     return result.Result;
@@ -84,7 +85,7 @@ namespace KsWare.RepositoryDiff.Commands
             }
             else // 3-way
             {
-                var result = new CompareResult(relativeName, folderA, folderB, folderC, "", _mainWindowViewModel);
+                var result = new CompareResultViewModel(relativeName, folderA, folderB, folderC, "", _mainWindowViewModel);
                 if(relativeName!="") Results.Add(result);
                 result.Result =  ScanFilesAndSubFolders(folderA, folderB, folderC);
 
@@ -199,7 +200,7 @@ namespace KsWare.RepositoryDiff.Commands
                 {
                     throw new NotImplementedException();
                 }
-                Results.Add(new CompareResult(relativeName, a, b, c, result, _mainWindowViewModel));
+                Results.Add(new CompareResultViewModel(relativeName, a, b, c, result, _mainWindowViewModel));
                 return result;
             }
             else // 3-way
@@ -220,7 +221,7 @@ namespace KsWare.RepositoryDiff.Commands
                 else if (c1 && a1 && b0) result = CompareBinaryFileContent(a, b, c); // gelöscht auf B;
                 else if (c1 && a1 && b1) result = CompareBinaryFileContent(a, b, c); // 
 
-                Results.Add(new CompareResult(relativeName, a, b, c, result, _mainWindowViewModel));
+                Results.Add(new CompareResultViewModel(relativeName, a, b, c, result, _mainWindowViewModel));
                 return result;
             }
         }
@@ -343,9 +344,9 @@ namespace KsWare.RepositoryDiff.Commands
 
         private bool IsExcluded(string relativeName)
         {
-            foreach (var pattern in _mainWindowViewModel.Excludes)
+            foreach (var regex in _mainWindowViewModel.Excludes)
             {
-                if (Regex.IsMatch(relativeName, pattern, RegexOptions.IgnoreCase)) return true;
+                if (regex.IsMatch(relativeName)) return true;
             }
 
             return false;

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.UI.Results.Commands
 {
     public class LeftDoubleClickCommand : ICommand
     {
-        private readonly CompareResult _compareResult;
+        private readonly CompareResultViewModel _compareResult;
 
-        public LeftDoubleClickCommand(CompareResult compareResult)
+        public LeftDoubleClickCommand(CompareResultViewModel compareResult)
         {
             _compareResult = compareResult;
         }

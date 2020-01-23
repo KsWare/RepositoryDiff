@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using KsWare.RepositoryDiff.Common;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.UI.Options
 {
     public class OptionsViewModel : NotifyPropertyChangedBase
     {

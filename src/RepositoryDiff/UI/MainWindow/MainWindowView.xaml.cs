@@ -1,17 +1,16 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.UI.MainWindow
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainWindowView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindowView : Window
     {
 
 
-        public MainWindow()
+        public MainWindowView()
         {
             InitializeComponent();
             ResultsListView.SizeChanged+=ResultsListView_SizeChanged;

@@ -2,13 +2,13 @@
 using System.IO;
 using System.Windows.Input;
 
-namespace KsWare.RepositoryDiff
+namespace KsWare.RepositoryDiff.UI.Results.Commands
 {
     public class CopyABCommand : ICommand
     {
-        private readonly CompareResult _compareResult;
+        private readonly CompareResultViewModel _compareResult;
 
-        public CopyABCommand(CompareResult compareResult)
+        public CopyABCommand(CompareResultViewModel compareResult)
         {
             _compareResult = compareResult;
         }
@@ -17,7 +17,7 @@ namespace KsWare.RepositoryDiff
 
         public void Execute(object parameter)
         {
-            File.Copy(_compareResult.A.FullName,_compareResult.B.FullName,true);
+            File.Copy(_compareResult.Data.A.FullName,_compareResult.Data.B.FullName,true);
             _compareResult.Result = "=,=";
             _compareResult.UpdateNameB();
         }

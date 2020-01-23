@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="KsWare.RepositoryDiff.FilterView"
+﻿<UserControl x:Class="KsWare.RepositoryDiff.UI.Filter.FilterView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:KsWare.RepositoryDiff"
+             xmlns:filter="clr-namespace:KsWare.RepositoryDiff.UI.Filter"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=local:FilterViewModel, IsDesignTimeCreatable=False}">
+             d:DataContext="{d:DesignInstance Type=filter:FilterViewModel, IsDesignTimeCreatable=False}">
 
     <UserControl.Resources>
         <Style x:Key="FilterTerms" TargetType="ItemsControl">
@@ -19,7 +19,7 @@
             <Setter Property="ItemTemplate">
                 <Setter.Value>
                     <DataTemplate>
-                        <local:FilterTermView/>
+                        <filter:FilterTermView/>
                     </DataTemplate>
                 </Setter.Value>
             </Setter>

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using KsWare.RepositoryDiff.UI.Results;
 
 namespace KsWare.RepositoryDiff
 {
     internal static class Helpers
     {
-        public static void CreateHierarchy(IList<CompareResult> results)
+        public static void CreateHierarchy(IEnumerable<CompareResultViewModel> results)
         {
-            foreach (var result in results)
+            foreach (var result in results.Where(x=>x.IsDirectory))
             {
                 result.Children = results.Where(x => x.Directory==result.RelativPath).ToList();
             }
