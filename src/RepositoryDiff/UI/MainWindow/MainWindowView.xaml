@@ -76,9 +76,11 @@
                                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClickCommand}"></MouseBinding>
                                             </UIElement.InputBindings>
                                             <FrameworkElement.ContextMenu>
-                                                <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <ContextMenu 
+                                                    DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                    d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
+                                                    >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
-                                                    <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Diff with...">
                                                         <MenuItem Header="MergeToolSelector AB" Command="{Binding DiffCommand}" CommandParameter="MergeToolSelectorAB"/>
@@ -90,6 +92,8 @@
                                                         <MenuItem Header="SemanticMerge BC" Command="{Binding DiffCommand}" CommandParameter="SemanticMergeBC"/>
                                                         <MenuItem Header="SemanticMerge 3-Way" Command="{Binding DiffCommand}" CommandParameter="SemanticMerge3Way"/>
                                                     </MenuItem>
+                                                    <Separator/>
+                                                    <MenuItem Header="Copy Name" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding Name}"/>
                                                 </ContextMenu>
                                             </FrameworkElement.ContextMenu>
                                             <TextBlock Text="{Binding Indent}" DockPanel.Dock="Left"/>
@@ -120,9 +124,10 @@
                                                              d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
                                                              >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
-                                                    <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Copy to B" Command="{Binding CopyABCommand}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="Copy full path" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding A.FullName}"/>
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                             <TextBlock x:Name="TextBlock" Text="{Binding ResultA}"/>
@@ -146,8 +151,9 @@
                                                     d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
                                                     >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
-                                                    <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding C.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding C.FullName}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="Copy full path" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding C.FullName}"/>
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                             <TextBlock x:Name="TextBlock" Text="{Binding ResultC}"/>
@@ -170,8 +176,9 @@
                                                     d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
                                                     >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
-                                                    <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding B.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding B.FullName}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="Copy full path" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding B.FullName}"/>
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                             <TextBlock x:Name="TextBlock" Text="{Binding ResultB}"/>
@@ -224,7 +231,7 @@
                                                     d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
                                                     >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
-                                                    <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding A.FullName}"/>
+                                                    <MenuItem Header="Copy full path" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding A.FullName}"/>
                                                     <MenuItem Header="Diff with...">
                                                         <MenuItem Header="MergeToolSelector AB" Command="{Binding DiffCommand}" CommandParameter="MergeToolSelectorAB"/>
@@ -267,7 +274,7 @@
                                                     d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
                                                     >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
-                                                    <MenuItem Header="Copy full path" Command="{Binding CopyFullPathCommand}" CommandParameter="{Binding B.FullName}"/>
+                                                    <MenuItem Header="Copy full path" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding B.FullName}"/>
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding B.FullName}"/>
                                                 </ContextMenu>
                                             </Grid.ContextMenu>

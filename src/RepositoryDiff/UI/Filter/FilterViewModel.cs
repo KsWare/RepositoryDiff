@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
 using KsWare.RepositoryDiff.Common;
 using KsWare.RepositoryDiff.UI.MainWindow.Commands;
 using KsWare.RepositoryDiff.UI.Results;
@@ -7,20 +8,42 @@ namespace KsWare.RepositoryDiff.UI.Filter
 {
     public class FilterViewModel : NotifyPropertyChangedBase
     {
-        public bool HideEqual { get => Get<bool>(); set => Set(value); }
+        private FilterData _data;
 
-        public FilterTermViewModel ResultA { get; } = new FilterTermViewModel();
-        public FilterTermViewModel ResultB { get; } = new FilterTermViewModel();
-        public FilterTermViewModel ResultC { get; } = new FilterTermViewModel();
-        public FilterTermViewModel FileExtensions { get; } = new FilterTermViewModel();
-
-        public string NameRegEx { get => Get<string>(); set => Set(value); }
-
-        
         public FilterViewModel()
         {
+            Data=new FilterData();
+        }     
+        
+        public bool ShowEmptyFolders { get =>_data.ShowEmptyFolders; set => Set(()=>_data.ShowEmptyFolders,v=>_data.ShowEmptyFolders=v,value); }
+        public bool HideEqual { get => _data.HideEqual; set => Set(()=>_data.HideEqual,v=>_data.HideEqual=v,value); }
 
+        public ResultFilterViewModel ResultA { get; } = new ResultFilterViewModel();
+        public ResultFilterViewModel ResultB { get; } = new ResultFilterViewModel();
+        public ResultFilterViewModel ResultC { get; } = new ResultFilterViewModel();
+        public FilterTermViewModel FileExtensions { get; } = new FilterTermViewModel();
+        public string NameRegEx { get => _data.NameRegEx; set => Set(()=>_data.NameRegEx,v=>_data.NameRegEx=v,value); }
+
+        public FilterData Data
+        {
+            get
+            {
+                _data.ResultA = ResultA.Data;
+                _data.ResultB = ResultB.Data;
+                _data.ResultC = ResultC.Data;
+                return _data;
+            }
+            set
+            { 
+                _data = value;
+                ResultA.Data=_data.ResultA;
+                ResultB.Data=_data.ResultB;
+                ResultC.Data=_data.ResultC;
+
+                OnPropertyChanged(string.Empty);
+            } 
         }
+
 
         public bool FilterFunction(object obj)
         {
@@ -44,5 +67,27 @@ namespace KsWare.RepositoryDiff.UI.Filter
         }
 
         public RefreshCommand RefreshCommand { get; set; }
+    }
+
+    public class FilterData
+    {
+        public bool ShowEmptyFolders { get; set; }
+
+        public bool HideEqual { get; set; }
+
+        public string NameRegEx { get; set; }
+
+        public ResultFilterData ResultA { get; set; } = new ResultFilterData();
+        public ResultFilterData ResultB { get; set; } = new ResultFilterData();
+        public ResultFilterData ResultC { get; set; } = new ResultFilterData();
+    }
+
+    public class FilterTermData
+    {
+        public string Not { get; set; }
+
+        public string Value { get; set; }
+
+        public string Operator { get; set; }
     }
 }

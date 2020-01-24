@@ -52,7 +52,7 @@ namespace KsWare.RepositoryDiff.UI.Results
             Data = data;
             _mainWindowViewModel = mainWindowViewModel;
 
-            CopyFullPathCommand = new CopyFullPathCommand();
+            CopyTextToClipboardCommand = new CopyTextToClipboardCommand();
             DiffCommand = new DiffCommand(this, _mainWindowViewModel);
             OpenInExplorerCommand = new OpenInExplorerCommand();
             LeftDoubleClickCommand = new LeftDoubleClickCommand(this);
@@ -119,7 +119,7 @@ namespace KsWare.RepositoryDiff.UI.Results
             OnPropertyChanged(nameof(NameB));
         }
 
-        public CopyFullPathCommand CopyFullPathCommand { get; set; }
+        public CopyTextToClipboardCommand CopyTextToClipboardCommand { get; set; }
 
         public DiffCommand DiffCommand { get; set; }
 
@@ -239,7 +239,7 @@ namespace KsWare.RepositoryDiff.UI.Results
             if (IsDirectory)
             {
                 Children.ForEach(c => c.UpdateFilter(filter, IsHiddenBecauseFilter));
-                IsHiddenBecauseAllChildsAreHidden =
+                IsHiddenBecauseAllChildsAreHidden = 
                     Children.Count == 0 || (Children.Count > 0 && Children.All(c => c.IsHidden));
             }
         }
@@ -256,9 +256,9 @@ namespace KsWare.RepositoryDiff.UI.Results
                 {
                     case '=': return "Unchanged";
                     case '#': return "Changed";
-                    case 'x': return "Deleted";
-                    case '*': return "Created";
-                    case '-': return ""; // does not exist, used together with new (*,-)
+                    case '-': return "Deleted";
+                    case '+': return "Created";
+                    case '~': return ""; // does not exist, used together with new (~~+)
                     default: return Result[1].ToString();
                 }
             }
@@ -273,7 +273,7 @@ namespace KsWare.RepositoryDiff.UI.Results
         {
             if (Result.Length == 2)
             {
-                return "?"; //TODO;
+                return Result[1].ToString();
             }
             else if (Result.Length == 3)
             {
@@ -281,9 +281,9 @@ namespace KsWare.RepositoryDiff.UI.Results
                 {
                     case '=': return "Unchanged";
                     case '#': return "Changed";
-                    case 'x': return "Deleted";
-                    case '*': return "Created";
-                    case '-': return ""; // does not exist, used together with new (*,-)
+                    case '-': return "Deleted";
+                    case '+': return "Created";
+                    case '~': return ""; // does not exist, used together with new (+~~)
                     default: return Result[1].ToString();
                 }
             }

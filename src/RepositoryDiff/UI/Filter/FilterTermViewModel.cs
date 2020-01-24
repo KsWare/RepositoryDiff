@@ -10,10 +10,17 @@ namespace KsWare.RepositoryDiff.UI.Filter
     {
         private ObservableCollection<FilterTermViewModel> _allTerms;
         private FilterTermViewModel _firstTerm;
+        private FilterTermData _data = new FilterTermData();
 
-        public string Not { get => Get<string>(); set => Set(value); }
-        public string Value { get => Get<string>(); set => Set(value); }
-        public string Operator { get => Get<string>(); set => UpdateNextIf(Set(value)); }
+        public FilterTermData Data
+        {
+            get { return _data; }
+            // set { _data = value; }
+        }
+
+        public string Not { get =>_data.Not; set => Set(()=>_data.Not,v=>_data.Not=v,value); }
+        public string Value { get =>_data.Value; set => Set(()=>_data.Value,v=>_data.Value=v,value); }
+        public string Operator { get =>_data.Operator; set => UpdateNextIf(Set(()=>_data.Operator,v=>_data.Operator=v,value)); }
 
         public IEnumerable<string> NotOperatorItems { get; } = new[] {"", "NOT"};
 
@@ -60,7 +67,7 @@ namespace KsWare.RepositoryDiff.UI.Filter
                     ((IList<FilterTermViewModel>) AllTerms).Add(Next);
                 }
                 
-                 AllTerms.Where(x => x != this && x.Next != null).ForEach(x => x.Operator = Operator);
+                AllTerms.Where(x => x != this && x.Next != null).ForEach(x => x.Operator = Operator);
                 
             }
         }
@@ -87,6 +94,19 @@ namespace KsWare.RepositoryDiff.UI.Filter
 
         public FilterTermViewModel FirstTerm => _firstTerm ??= GetFirstTerm();
 
+        
+
         private FilterTermViewModel GetFirstTerm() => Previous == null ? this : Previous.FirstTerm;
+
+        public void SetData(FilterTermData[] terms, int index = 0)
+        {
+            if (Previous == null) ((ObservableCollection<FilterTermViewModel>) FirstTerm.AllTerms).Clear();
+            _data = terms[index];
+            UpdateNextIf(true);
+            Next?.SetData(terms,index+1);
+            OnPropertyChanged(nameof(Not));
+            OnPropertyChanged(nameof(Value));
+            OnPropertyChanged(nameof(Operator));
+        }
     }
 }

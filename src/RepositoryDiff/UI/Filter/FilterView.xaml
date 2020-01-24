@@ -46,22 +46,27 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
         </FrameworkElement.Resources>
+        <DockPanel IsEnabled="False">
+            <Label Content="Show empty folders" />
+            <CheckBox IsChecked="{Binding ShowEmptyFolders}" />
+        </DockPanel>
         <DockPanel>
             <Label Content="Hide Equal" />
             <CheckBox IsChecked="{Binding HideEqual}" />
         </DockPanel>
         <DockPanel>
             <Label Content="ResultA" />
-            <ItemsControl ItemsSource="{Binding ResultA.AllTerms}" Style="{StaticResource FilterTerms}"/>
-        </DockPanel>
-        <DockPanel>
-            <Label Content="ResultB" />
-            <ItemsControl ItemsSource="{Binding ResultB.AllTerms}" Style="{StaticResource FilterTerms}"/>
+            <filter:ResultFilterView DataContext="{Binding ResultA}"/>
         </DockPanel>
         <DockPanel>
             <Label Content="ResultC" />
-            <ItemsControl ItemsSource="{Binding ResultC.AllTerms}" Style="{StaticResource FilterTerms}"/>
+            <filter:ResultFilterView DataContext="{Binding ResultC}" />
         </DockPanel>
+        <DockPanel>
+            <Label Content="ResultB" />
+            <filter:ResultFilterView DataContext="{Binding ResultB}"/>
+        </DockPanel>
+
         <DockPanel>
             <Label Content="Name (RegEx)" />
             <TextBox Text="{Binding NameRegEx}"/>

@@ -4,13 +4,13 @@ using System.Windows.Input;
 
 namespace KsWare.RepositoryDiff.Commands
 {
-    public class CopyFullPathCommand : ICommand
+    public class CopyTextToClipboardCommand : ICommand
     {
         public bool CanExecute(object parameter) => true;
 
-        public void Execute(object parameter)
+        public void Execute(object text)
         {
-            Clipboard.SetText((string)parameter);
+            Clipboard.SetText((string)text);
 
         }
 

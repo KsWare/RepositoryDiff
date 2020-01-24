@@ -53,7 +53,7 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
             string folderName = folderA.Name;
             string relativeName = GetRelativeName(RootA,folderA.FullName);
 
-            if (IsExcluded(relativeName)) return folderC == null ? "==" : "===";
+            if (IsExcluded(relativeName)) return null;
 
             System.Diagnostics.Debug.WriteLine($"{relativeName}");
 
@@ -96,12 +96,12 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
                 var c0 = !c1;
 
                 if (c0 && a0 && b0) ; //                             ---
-                if (c0 && a0 && b1) result.Result = "-,*"; // neu auf B
-                if (c0 && a1 && b0) result.Result = "*,-"; // neu auf A
-                if (c0 && a1 && b1) result.Result = "*?*"; // neu auf beiden Seiten; 
-                if (c1 && a0 && b0) result.Result = "x=x"; // gelöscht auf beiden Seiten
-                if (c1 && a0 && b1) result.Result = "x??"; // gelöscht auf A;
-                if (c1 && a1 && b0) result.Result = "??x"; // gelöscht auf B;
+                if (c0 && a0 && b1) result.Result = "~~+"; // neu auf B
+                if (c0 && a1 && b0) result.Result = "+~~"; // neu auf A
+                if (c0 && a1 && b1) result.Result = "+.+"; // neu auf beiden Seiten; 
+                if (c1 && a0 && b0) result.Result = "-=-"; // gelöscht auf beiden Seiten
+                if (c1 && a0 && b1) result.Result = "-??"; // gelöscht auf A;
+                if (c1 && a1 && b0) result.Result = "??-"; // gelöscht auf B;
                 if (c1 && a1 && b1) ; // 
 
 
@@ -113,7 +113,6 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
         {
             var f = ScanFiles(folderA, folderB, folderC);
             var d = RecursiveScanSubFolders(folderA, folderB, folderC);
-            var sameResult = f == d ? f : "";
             return folderC==null ? CombineResult2Way(new[]{f,d}) : CombineResult3Way(new[]{f,d});
         }
 
@@ -166,23 +165,25 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
 
         private string CombineResult2Way(IEnumerable<string> results)
         {
-            char a=' ', b=' ';
+            char a='=', b='=';
             foreach (var r in results)
             {
-                if (r[0] == '!' || a == '!') a = '!'; else if (a == ' ') a = r[0]; else if (a != r[0]) a = '*';
-                if (r[1] == '!' || b == '!') b = '!'; else if (b == ' ') b = r[1]; else if (b != r[1]) b = '*';
+                if(r==null) continue; // excluded
+                if (r[0] == '!' || a == '!') a = '!'; else if (a == '=') a = r[0]; else if (a != r[0]) a = '*';
+                if (r[1] == '!' || b == '!') b = '!'; else if (b == '=') b = r[1]; else if (b != r[1]) b = '*';
             }
             return $"{a}{b}";
 
         }
         private string CombineResult3Way(IEnumerable<string> results)
         {
-            char a=' ', b=' ', c=' ';
+            char a='=', b='=', c='=';
             foreach (var r in results)
             {
-                if (r[0] == '!' || a == '!') a = '!'; else if (a == ' ') a = r[0]; else if (a != r[0]) a = '*';
-                if (r[1] == '!' || c == '!') c = '!'; else if (c == ' ') b = r[1]; else if (c != r[1]) c = '*';
-                if (r[2] == '!' || b == '!') b = '!'; else if (b == ' ') b = r[2]; else if (b != r[2]) b = '*';
+                if(r==null) continue; // excluded
+                if (r[0] == '!' || a == '!') a = '!'; else if (a == '=') a = r[0]; else if (a != r[0]) a = '*';
+                if (r[1] == '!' || c == '!') c = '!'; else if (c == '=') c = r[1]; else if (c != r[1]) c = '*';
+                if (r[2] == '!' || b == '!') b = '!'; else if (b == '=') b = r[2]; else if (b != r[2]) b = '*';
             }
             return $"{a}{c}{b}";
         }
@@ -190,7 +191,7 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
         private string CompareFile(FileInfo a, FileInfo b, FileInfo c)
         {
             string relativeName = GetRelativeName(RootA,a.FullName);
-            if (IsExcluded(relativeName)) return c == null ? "==" : "===";
+            if (IsExcluded(relativeName)) return null;
 
             if (c == null) // 2-way
             {
