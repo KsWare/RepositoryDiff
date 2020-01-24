@@ -114,7 +114,7 @@
                             <GridViewColumn Header="A (their)">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
-                                        <Grid ToolTip="{Binding A.FullName}">
+                                        <Grid x:Name="CellRoot" ToolTip="{Binding A.FullName}">
                                             <Grid.ContextMenu>
                                                 <ContextMenu DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
                                                              d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
@@ -128,17 +128,18 @@
                                             <TextBlock x:Name="TextBlock" Text="{Binding ResultA}"/>
                                         </Grid>
                                         <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding IsDirectory}" Value="True">
-                                                <Setter TargetName="TextBlock" Property="FontWeight" Value="Bold"/>
+                                            <DataTrigger Binding="{Binding ResultC}" Value="Equal">
+                                                <Setter TargetName="CellRoot" Property="Background" Value="GreenYellow"/>
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
+                                
                             </GridViewColumn>
                             <GridViewColumn Header="C (base)">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
-                                        <Grid ToolTip="{Binding C.FullName}">
+                                        <Grid x:Name="CellRoot" ToolTip="{Binding C.FullName}">
                                             <Grid.ContextMenu>
                                                 <ContextMenu 
                                                     DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
@@ -152,8 +153,8 @@
                                             <TextBlock x:Name="TextBlock" Text="{Binding ResultC}"/>
                                         </Grid>
                                         <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding IsDirectory}" Value="True">
-                                                <Setter TargetName="TextBlock" Property="FontWeight" Value="Bold"/>
+                                            <DataTrigger Binding="{Binding ResultC}" Value="Equal">
+                                                <Setter TargetName="CellRoot" Property="Background" Value="GreenYellow"/>
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
                                     </DataTemplate>
@@ -162,7 +163,7 @@
                             <GridViewColumn Header="B (your)">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
-                                        <Grid ToolTip="{Binding B.FullName}">
+                                        <Grid x:Name="CellRoot" ToolTip="{Binding B.FullName}">
                                             <Grid.ContextMenu>
                                                 <ContextMenu 
                                                     DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
@@ -176,8 +177,8 @@
                                             <TextBlock x:Name="TextBlock" Text="{Binding ResultB}"/>
                                         </Grid>
                                         <DataTemplate.Triggers>
-                                            <DataTrigger Binding="{Binding IsDirectory}" Value="True">
-                                                <Setter TargetName="TextBlock" Property="FontWeight" Value="Bold"/>
+                                            <DataTrigger Binding="{Binding ResultC}" Value="Equal">
+                                                <Setter TargetName="CellRoot" Property="Background" Value="GreenYellow"/>
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
                                     </DataTemplate>
@@ -187,6 +188,8 @@
                     </ListView.View>
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsHidden}" Value="True">
                                     <Setter Property="Visibility" Value="Collapsed"/>

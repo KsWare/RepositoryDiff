@@ -114,10 +114,9 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
             var f = ScanFiles(folderA, folderB, folderC);
             var d = RecursiveScanSubFolders(folderA, folderB, folderC);
             var sameResult = f == d ? f : "";
-            return FormatSameResult(sameResult, folderC != null);
+            return folderC==null ? CombineResult2Way(new[]{f,d}) : CombineResult3Way(new[]{f,d});
         }
 
-        
 
         private string RecursiveScanSubFolders(DirectoryInfo folderA, DirectoryInfo folderB, DirectoryInfo folderC)
         {
@@ -125,7 +124,7 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
             var bEntries = folderB.Exists ? folderB.GetDirectories() : new DirectoryInfo[0];
             var cEntries = folderC?.Exists??false ? folderC?.GetDirectories() : new DirectoryInfo[0];
             var names = GetUniqueNames(aEntries, bEntries, cEntries);
-            var sameResult = (string)null;
+            var results = new List<string>();
             foreach (var name in names)
             {
                 var a = aEntries.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
@@ -135,10 +134,10 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
                 var c = cEntries.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
                         ?? new DirectoryInfo(Path.Combine(folderC.FullName, name));
                 var r = RecursiveScanFolders(a, b, c);
-                if (sameResult == null) sameResult = r; else if (sameResult != r) sameResult = "";
+                results.Add(r);
             }
 
-            return FormatSameResult(sameResult, folderC != null);
+            return folderC==null ? CombineResult2Way(results) : CombineResult3Way(results);
         }
 
         private string ScanFiles(DirectoryInfo folderA, DirectoryInfo folderB, DirectoryInfo folderC)
@@ -147,7 +146,7 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
             var bEntries = folderB.Exists ? folderB.GetFiles() : new FileInfo[0];
             var cEntries = folderC?.Exists ?? false ? folderC.GetFiles() : new FileInfo[0];
             var names = GetUniqueNames(aEntries, bEntries, cEntries);
-            var sameResult = (string)null;
+            var results = new List<string>();
             foreach (var name in names)
             {
                 var a = aEntries.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
@@ -159,20 +158,33 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
                       ?? new FileInfo(Path.Combine(folderC.FullName, name))
                     :null;
                 var r = CompareFile(a, b, c);
-                if (sameResult == null) sameResult = r; else if (sameResult != r) sameResult = "";
+                results.Add(r);
             }
 
-            return FormatSameResult(sameResult,folderC!=null);
+            return folderC==null ? CombineResult2Way(results) : CombineResult3Way(results);
         }
 
-        private string FormatSameResult(string sameResult, bool is3Way)
+        private string CombineResult2Way(IEnumerable<string> results)
         {
-            switch (sameResult)
+            char a=' ', b=' ';
+            foreach (var r in results)
             {
-                case null: return is3Way ? "===" : "=="; // no result (no files/folders)
-                case ""  : return is3Way ? "!!!" : "!!"; // different result
-                default  : return sameResult; 
+                if (r[0] == '!' || a == '!') a = '!'; else if (a == ' ') a = r[0]; else if (a != r[0]) a = '*';
+                if (r[1] == '!' || b == '!') b = '!'; else if (b == ' ') b = r[1]; else if (b != r[1]) b = '*';
             }
+            return $"{a}{b}";
+
+        }
+        private string CombineResult3Way(IEnumerable<string> results)
+        {
+            char a=' ', b=' ', c=' ';
+            foreach (var r in results)
+            {
+                if (r[0] == '!' || a == '!') a = '!'; else if (a == ' ') a = r[0]; else if (a != r[0]) a = '*';
+                if (r[1] == '!' || c == '!') c = '!'; else if (c == ' ') b = r[1]; else if (c != r[1]) c = '*';
+                if (r[2] == '!' || b == '!') b = '!'; else if (b == ' ') b = r[2]; else if (b != r[2]) b = '*';
+            }
+            return $"{a}{c}{b}";
         }
 
         private string CompareFile(FileInfo a, FileInfo b, FileInfo c)
@@ -212,13 +224,13 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
                 var c1 = c.Exists;
                 var c0 = !c1;
                 if      (c0 && a0 && b0) result = "???"; //                             ---
-                else if (c0 && a0 && b1) result = "-,*"; //                             neu auf B
-                else if (c0 && a1 && b0) result = "*,-"; //                             neu auf A
-                else if (c0 && a1 && b1) result = CompareBinaryFileContent(a, b, c); // neu auf beiden Seiten; 
-                else if (c1 && a0 && b0) result = "x=x"; //                             gelöscht auf beiden Seiten
-                else if (c1 && a0 && b1) result = CompareBinaryFileContent(a, b, c); // gelöscht auf A;
-                else if (c1 && a1 && b0) result = CompareBinaryFileContent(a, b, c); // gelöscht auf B;
-                else if (c1 && a1 && b1) result = CompareBinaryFileContent(a, b, c); // 
+                else if (c0 && a0 && b1) result = "~~+"; //                             neu auf B                   ~~+
+                else if (c0 && a1 && b0) result = "+~~"; //                             neu auf A                   +~~
+                else if (c0 && a1 && b1) result = CompareBinaryFileContent(a, b, c); // neu auf beiden Seiten;      +=+ +!+
+                else if (c1 && a0 && b0) result = "-=-"; //                             gelöscht auf beiden Seiten  -=-
+                else if (c1 && a0 && b1) result = CompareBinaryFileContent(a, b, c); // gelöscht auf A;             -!# -!=
+                else if (c1 && a1 && b0) result = CompareBinaryFileContent(a, b, c); // gelöscht auf B;             #!- =!-
+                else if (c1 && a1 && b1) result = CompareBinaryFileContent(a, b, c); //                             === #.= =.# #!#
 
                 Results.Add(new CompareResultViewModel(relativeName, a, b, c, result, _mainWindowViewModel));
                 return result;
@@ -265,8 +277,8 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
                     }
                 }
                 if (acResult == "==" && bcResult == "==") return "==="; // keine Änderungen
-                if (acResult == "!!" && bcResult == "==") return "#,="; // A geändert
-                if (acResult == "==" && bcResult == "!!") return "=,#"; // B geändert
+                if (acResult == "!!" && bcResult == "==") return "#.="; // A geändert
+                if (acResult == "==" && bcResult == "!!") return "=.#"; // B geändert
                 if (abResult == "=="                    ) return "#=#"; // gleiche Änderungen auf A und B
                 /*                                     */ return "#!#"; // A und B geändert, Konflikt
             }
@@ -274,20 +286,20 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
             if (a.Exists && c.Exists)
             {
                 return CompareBinaryFileContent(a, c) == "==" 
-                    ? "=,x"  // A unverändert, B gelöscht
-                    : "#!x"; // A verändert, B gelöscht, Konflikt
+                    ? "=.-"  // A unverändert, B gelöscht   => nix zu tun
+                    : "#!-"; // A verändert, B gelöscht     => Konflikt
             }
             if (b.Exists && c.Exists)
             {
                 return CompareBinaryFileContent(b, c) == "==" 
-                    ? "x,=" // A gelöscht, B unverändert
-                    : "x!#";// A gelöscht, B geändert, Konflikt
+                    ? "-.=" // A gelöscht, B unverändert   => B löschen
+                    : "-!#";// A gelöscht, B geändert,     => Konflikt
             }
             if (a.Exists && b.Exists)
             {
                 return CompareBinaryFileContent(a, b) == "==" 
-                    ? "*,*" // A und B neu, A gleich B
-                    : "*!*";// A und B neu, A ungleich B, Konflikt
+                    ? "+=+" // A und B neu, A gleich B      => nix zu tun
+                    : "+!+";// A und B neu, A ungleich B    => Konflikt
             }
 
             throw new NotImplementedException();

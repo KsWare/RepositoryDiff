@@ -44,45 +44,70 @@ namespace KsWare.RepositoryDiff.UI.Results.Commands
             var file = (string) null;
             var arguments = "";
             var arguments2 = "";
+            var fileA = _compareResult.Data.A.FullName;
+            var fileB = _compareResult.Data.B.FullName;
+            var fileC = _compareResult.Data.C?.FullName;
+
+            bool a1 = _compareResult.Data.A.Exists, a0 = !a1;
+            bool b1 = _compareResult.Data.B.Exists, b0 = !b1;
+            bool c1 = _compareResult.Data.C?.Exists??false, c0 = !c1;
 
             switch (argument as string)
             {
                 case "SemanticMergeAB" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\"";
+                    arguments = $"-s \"{fileA}\" -d \"{fileB}\"";
                     break;
                 case "SemanticMergeAC" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
+                    arguments = $"-s \"{fileA}\" -d \"{fileC}\"";
                     break;
                 case "SemanticMergeBC" : 
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.Data.B.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
+                    arguments = $"-s \"{fileB}\" -d \"{fileC}\"";
                     break;
-                case "SemanticMerge3Way" : 
+                case "SemanticMerge3Way" :
+                    if (c0 && b0 && a0) ;
+                    if (c0 && b0 && a1) goto case "SemanticMergeA";
+                    if (c0 && b1 && a0) goto case "SemanticMergeB";
+                    if (c0 && b1 && a1) goto case "SemanticMergeAB";
+                    if (c1 && b0 && a0) goto case "SemanticMergeC";
+                    if (c1 && b0 && a1) goto case "SemanticMergeAC";
+                    if (c1 && b1 && a0) goto case "SemanticMergeBC";
+                    if (c1 && b1 && a1) ;
+
                     merged = GetTempFileName(Path.GetExtension(_compareResult.Data.B.Name));
                     file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\" -b \"{_compareResult.Data.C.FullName}\" -r \"{merged}\"";
-                    arguments2 = $"-s \"{_compareResult.Data.B.FullName}\" -d \"{merged}\"";
+                    arguments = $"-s \"{fileA}\" -d \"{fileB}\" -b \"{fileC}\" -r \"{merged}\"";
+                    arguments2 = $"-s \"{fileB}\" -d \"{merged}\"";
                     break;
+                case "SemanticMergeA" : 
+                    fileC=GetTempFileName(Path.GetExtension(_compareResult.Data.B.Name),true);
+                    goto case "SemanticMergeAC";
+                case "SemanticMergeB" : 
+                    fileC=GetTempFileName(Path.GetExtension(_compareResult.Data.B.Name),true);
+                    goto case "SemanticMergeBC";
+                case "SemanticMergeC" : 
+                    fileB=GetTempFileName(Path.GetExtension(_compareResult.Data.B.Name),true);
+                    goto case "SemanticMergeBC";
 
                 case "MergeToolSelectorAB" : 
-                    file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool diff -s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\"";
+                    file = @"C:\Program Files (x86)\KsWare\MergeToolSelector\MergeToolSelector.exe";
+                    arguments = $"-tool diff -s \"{fileA}\" -d \"{fileB}\"";
                     break;
                 case "MergeToolSelectorAC" : 
-                    file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool diff -s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
+                    file = @"C:\Program Files (x86)\KsWare\MergeToolSelector\MergeToolSelector.exe";
+                    arguments = $"-tool diff -s \"{fileA}\" -d \"{fileC}\"";
                     break;
                 case "MergeToolSelectorBC" : 
-                    file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool diff -s \"{_compareResult.Data.B.FullName}\" -d \"{_compareResult.Data.C.FullName}\"";
+                    file = @"C:\Program Files (x86)\KsWare\MergeToolSelector\MergeToolSelector.exe";
+                    arguments = $"-tool diff -s \"{fileB}\" -d \"{fileC}\"";
                     break;
                 case "MergeToolSelector3Way" : 
                     merged = GetTempFileName(Path.GetExtension(_compareResult.Data.B.Name));
-                    file = @"C:\Program Files\SemanticMerge\semanticmergetool.exe";
-                    arguments = $"-tool merge -s \"{_compareResult.Data.A.FullName}\" -d \"{_compareResult.Data.B.FullName}\" -b \"{_compareResult.Data.C.FullName}\" -r \"{merged}\"";
-                    arguments2 = $"-tool diff -s \"{_compareResult.Data.B.FullName}\" -d \"{merged}\"";
+                    file = @"C:\Program Files (x86)\KsWare\MergeToolSelector\MergeToolSelector.exe";
+                    arguments = $"-tool merge -s \"{fileA}\" -d \"{fileB}\" -b \"{fileC}\" -r \"{merged}\"";
+                    arguments2 = $"-tool diff -s \"{fileB}\" -d \"{merged}\"";
                     break;
                 default:
                     if (_compareResult.NameC == null) goto case "SemanticMergeAB";
@@ -109,9 +134,10 @@ namespace KsWare.RepositoryDiff.UI.Results.Commands
             if(merged!=null) File.Delete(merged);
         }
 
-        private string GetTempFileName(string extension)
+        private string GetTempFileName(string extension, bool create=false)
         {
             var path=Path.Combine(Path.GetTempPath(), "merged_"+Guid.NewGuid().ToString("N") + extension);
+            if (create)File.Create(path).Close();
             return path;
         }
 
