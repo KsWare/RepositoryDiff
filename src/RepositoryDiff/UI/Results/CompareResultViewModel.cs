@@ -54,6 +54,7 @@ namespace KsWare.RepositoryDiff.UI.Results
 
             CopyTextToClipboardCommand = new CopyTextToClipboardCommand();
             DiffCommand = new DiffCommand(this, _mainWindowViewModel);
+            HideCommand = new HideCommand(this, _mainWindowViewModel);
             OpenInExplorerCommand = new OpenInExplorerCommand();
             LeftDoubleClickCommand = new LeftDoubleClickCommand(this);
             CopyABCommand = new CopyABCommand(this);
@@ -122,6 +123,7 @@ namespace KsWare.RepositoryDiff.UI.Results
         public CopyTextToClipboardCommand CopyTextToClipboardCommand { get; set; }
 
         public DiffCommand DiffCommand { get; set; }
+        public HideCommand HideCommand { get; set; }
 
         public OpenInExplorerCommand OpenInExplorerCommand { get; set; }
 
@@ -136,13 +138,13 @@ namespace KsWare.RepositoryDiff.UI.Results
             private set => Set(ref _isHidden, value);
         }
 
-        private bool IsHiddenByUser
+        public bool IsHiddenByUser
         {
             get => _isHiddenByUser;
             set
             {
                 _isHiddenByUser = value;
-                UpdateIsHidden();
+                UpdateIsHiddenRecursive();
             }
         }
 
@@ -183,6 +185,7 @@ namespace KsWare.RepositoryDiff.UI.Results
             get => _isHiddenBecauseParentIsHidden;
             set
             {
+                if(_isHiddenBecauseParentIsHidden==value) return;
                 _isHiddenBecauseParentIsHidden = value;
                 UpdateIsHidden();
             }
@@ -193,6 +196,17 @@ namespace KsWare.RepositoryDiff.UI.Results
             IsHidden = _isHiddenBecauseFilter || _isHiddenBecauseCollapsed || _isHiddenByUser ||
                        _isHiddenBecauseAllChildsAreHidden || _isHiddenBecauseParentIsHidden;
         }
+        private void UpdateIsHiddenRecursive()
+        {
+            UpdateIsHidden();
+            foreach (var child in Children)
+            {
+                child.IsHiddenBecauseParentIsHidden = IsHidden;
+                child.UpdateIsHiddenRecursive();
+            }
+        }
+
+
 
         public bool IsExpanded
         {
@@ -238,7 +252,7 @@ namespace KsWare.RepositoryDiff.UI.Results
             IsHiddenBecauseFilter = !filter.Match(this);
             if (IsDirectory)
             {
-                Children.ForEach(c => c.UpdateFilter(filter, IsHiddenBecauseFilter));
+                Children.ForEach(c => c.UpdateFilter(filter, IsHidden));
                 IsHiddenBecauseAllChildsAreHidden = 
                     Children.Count == 0 || (Children.Count > 0 && Children.All(c => c.IsHidden));
             }

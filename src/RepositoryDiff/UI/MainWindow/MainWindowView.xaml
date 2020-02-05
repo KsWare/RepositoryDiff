@@ -11,7 +11,7 @@
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:files="clr-namespace:KsWare.RepositoryDiff.UI.Files"
     mc:Ignorable="d"
-    Title="MainWindowView" Height="450" Width="800"
+    Title="Repository Diff" Height="450" Width="800"
     d:DataContext="{d:DesignInstance Type=mainWindow:MainWindowViewModel, IsDesignTimeCreatable=True}"
 >
     <Window.DataContext>
@@ -62,13 +62,13 @@
                 <Button Content="Import" Command="{Binding ImportCommand}" Width="50" Margin="4 0 0 0"/>
             </StackPanel>
         </StackPanel>
-       
+
         <TabControl x:Name="ResultsTabControl" Margin="0 10 0 0">
             <TabItem Header="Results 3">
                 <ListView x:Name="ResultsListView3" ItemsSource="{Binding Results}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Name">
+                            <GridViewColumn Header="Name" Width="430">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
                                         <DockPanel>
@@ -94,6 +94,7 @@
                                                     </MenuItem>
                                                     <Separator/>
                                                     <MenuItem Header="Copy Name" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding Name}"/>
+                                                    <MenuItem Header="Hide" Command="{Binding HideCommand}"/>
                                                 </ContextMenu>
                                             </FrameworkElement.ContextMenu>
                                             <TextBlock Text="{Binding Indent}" DockPanel.Dock="Left"/>
@@ -108,14 +109,14 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Result">
+                            <GridViewColumn Header="Result" Width="40">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
                                         <TextBlock x:Name="TextBlock" Text="{Binding Result}" FontFamily="Consolas" TextAlignment="Center"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="A (their)">
+                            <GridViewColumn Header="A (their)" Width="75">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
                                         <Grid x:Name="CellRoot" ToolTip="{Binding A.FullName}">
@@ -139,9 +140,9 @@
                                         </DataTemplate.Triggers>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
-                                
+
                             </GridViewColumn>
-                            <GridViewColumn Header="C (base)">
+                            <GridViewColumn Header="C (base)" Width="70">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
                                         <Grid x:Name="CellRoot" ToolTip="{Binding C.FullName}">
@@ -166,7 +167,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="B (your)">
+                            <GridViewColumn Header="B (your)" Width="75">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
                                         <Grid x:Name="CellRoot" ToolTip="{Binding B.FullName}">
@@ -218,12 +219,12 @@
                 <ListView x:Name="ResultsListView" ItemsSource="{Binding Results}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="A">
+                            <GridViewColumn Header="Name" Width="430">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
-                                        <DockPanel ToolTip="{Binding A.FullName}">
+                                        <DockPanel ToolTip="{Binding Name}">
                                             <UIElement.InputBindings>
-                                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClickCommand}"></MouseBinding>
+                                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClickCommand}"/>
                                             </UIElement.InputBindings>
                                             <FrameworkElement.ContextMenu>
                                                 <ContextMenu 
@@ -231,23 +232,13 @@
                                                     d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
                                                     >
                                                     <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
-                                                    <MenuItem Header="Copy full path" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding A.FullName}"/>
-                                                    <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding A.FullName}"/>
-                                                    <MenuItem Header="Diff with...">
-                                                        <MenuItem Header="MergeToolSelector AB" Command="{Binding DiffCommand}" CommandParameter="MergeToolSelectorAB"/>
-                                                        <MenuItem Header="MergeToolSelector AC" Command="{Binding DiffCommand}" CommandParameter="MergeToolSelectorAC"/>
-                                                        <MenuItem Header="MergeToolSelector BC" Command="{Binding DiffCommand}" CommandParameter="MergeToolSelectorBC"/>
-                                                        <MenuItem Header="MergeToolSelector 3-Way" Command="{Binding DiffCommand}" CommandParameter="MergeToolSelector3Way"/>
-                                                        <MenuItem Header="SemanticMerge AB" Command="{Binding DiffCommand}" CommandParameter="SemanticMergeAB"/>
-                                                        <MenuItem Header="SemanticMerge AC" Command="{Binding DiffCommand}" CommandParameter="SemanticMergeAC"/>
-                                                        <MenuItem Header="SemanticMerge BC" Command="{Binding DiffCommand}" CommandParameter="SemanticMergeBC"/>
-                                                        <MenuItem Header="SemanticMerge 3-Way" Command="{Binding DiffCommand}" CommandParameter="SemanticMerge3Way"/>
-                                                    </MenuItem>
+                                                    <MenuItem Header="Copy Name" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding Name}"/>
+                                                    <MenuItem Header="Hide" Command="{Binding HideCommand}"/>
                                                 </ContextMenu>
                                             </FrameworkElement.ContextMenu>
                                             <TextBlock Text="{Binding Indent}" DockPanel.Dock="Left"/>
                                             <ToggleButton Style="{StaticResource TreeViewItemToggleButtonStyle}"/>
-                                            <TextBlock x:Name="TextBlock" Text="{Binding NameA}"/>
+                                            <TextBlock x:Name="TextBlock" Text="{Binding Name}"/>
                                         </DockPanel>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding IsDirectory}" Value="True">
@@ -257,14 +248,38 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Result">
+                            <GridViewColumn Header="Result" Width="40">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
                                         <TextBlock x:Name="TextBlock" Text="{Binding Result}" FontFamily="Consolas" TextAlignment="Center"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="B">
+                            <GridViewColumn Header="A" Width="70">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="results:CompareResultViewModel">
+                                        <Grid ToolTip="{Binding A.FullName}">
+                                            <Grid.ContextMenu>
+                                                <ContextMenu 
+                                                    DataContext="{Binding Path=PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                    d:DataContext="{d:DesignInstance Type=results:CompareResultViewModel, IsDesignTimeCreatable=False}"
+                                                    >
+                                                    <MenuItem Header="Diff" Command="{Binding DiffCommand}"/>
+                                                    <MenuItem Header="Copy full path" Command="{Binding CopyTextToClipboardCommand}" CommandParameter="{Binding A.FullName}"/>
+                                                    <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding A.FullName}"/>
+                                                </ContextMenu>
+                                            </Grid.ContextMenu>
+                                            <TextBlock x:Name="TextBlock" Text="{Binding NameA}"/>
+                                        </Grid>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsDirectory}" Value="True">
+                                                <Setter TargetName="TextBlock" Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="B" Width="70">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate DataType="results:CompareResultViewModel">
                                         <Grid ToolTip="{Binding B.FullName}">
@@ -278,7 +293,7 @@
                                                     <MenuItem Header="Explorer" Command="{Binding OpenInExplorerCommand}" CommandParameter="{Binding B.FullName}"/>
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
-                                            <TextBlock x:Name="TextBlock" Text="{Binding IndentedNameB}"/>
+                                            <TextBlock x:Name="TextBlock" Text="{Binding NameB}"/>
                                         </Grid>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding IsDirectory}" Value="True">

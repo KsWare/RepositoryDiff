@@ -130,8 +130,10 @@ namespace KsWare.RepositoryDiff.UI.MainWindow.Commands
                         ?? new DirectoryInfo(Path.Combine(folderA.FullName, name));
                 var b = bEntries.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
                         ?? new DirectoryInfo(Path.Combine(folderB.FullName, name));
-                var c = cEntries.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
-                        ?? new DirectoryInfo(Path.Combine(folderC.FullName, name));
+                var c = folderC != null
+                    ? cEntries.FirstOrDefault(x => x.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))
+                      ?? new DirectoryInfo(Path.Combine(folderC.FullName, name))
+                    : null;
                 var r = RecursiveScanFolders(a, b, c);
                 results.Add(r);
             }
